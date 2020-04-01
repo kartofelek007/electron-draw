@@ -1,0 +1,41 @@
+body {
+    margin:0;
+    height: 100vh;
+    overflow: hidden;
+    /*background: url(../images/2020-03-17_223546.png);*/
+    /*background: url(../images/2020-03-19_192223.png);*/
+}
+
+body.white-board-mode {
+    background: #fff url(../images/paper1.png);
+}
+
+.canvas-container:not(.default),
+.canvas-container:not(.default) canvas{
+    cursor: none !important;
+}
+
+#main {}
+#second {
+    position: absolute;
+    left: 0;
+    top: 0;
+    cursor: none !important;
+}
+#second {
+    pointer-events: none;
+    z-index: 0;
+}
+
+.screenshoot-save-completed {
+    font-family: sans-serif;
+    padding: 10px;
+    font-size: 12px;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.7);
+    color: #fff;
+    margin: 10px;
+    display: inline-block;
+}

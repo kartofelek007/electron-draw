@@ -1,0 +1,39 @@
+{
+    "toggleKey" : "F7",
+
+    "size": {
+        "min": 4,
+        "max": 30,
+        "step": 2,
+        "default": 10
+    },
+
+    "interactiveGui" : true,
+
+    "savePrintScreen" : true,
+
+    "keys" : {
+        "hideGui" : "`",
+        "clearScreen": "c",
+        "whiteBoard": "/",
+
+        "colors": [
+            {"key" : "r", "name": "red", "color" : "#E53A40"},
+            {"key" : "g", "name": "green", "color" : "#3ac569"},
+            {"key" : "b", "name": "blue", "color" : "#0080ff"},
+            {"key" : "p", "name": "pink", "color" : "#ed317f"},
+            {"key" : "y", "name": "yellow", "color" : "#f8ca00"},
+            {"key" : "o", "name": "orange", "color" : "#fc913a"}
+        ],
+
+        "tools" : [
+            {"key": "1", "name": "brush", "tool": "brush"},
+            {"key": "2", "name": "line", "tool": "line"},
+            {"key": "3", "name": "rectangle", "tool": "rectangle"},
+            {"key": "4", "name": "points", "tool": "points"},
+            {"key": "5", "name": "ruler", "tool": "ruler"},
+            {"key": "9", "name": "zoom", "tool": "zoom"},
+            {"key": "0", "name": "spot", "tool": "spot"}
+        ]
+    }
+}

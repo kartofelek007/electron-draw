@@ -1,0 +1,45 @@
+{
+    "name": "PresentationDrawer",
+    "version": "1.0.0",
+    "description": "Aplication for draw on screen",
+    "main": "main.js",
+    "scripts": {
+        "start": "electron .",
+        "build": "electron-builder"
+    },
+    "keywords": [
+        "Electron",
+        "Presentation",
+        "Draw"
+    ],
+    "author": "Marcin Domański",
+    "license": "CC0-1.0",
+    "devDependencies": {
+        "electron": "^9.0.0-beta.7",
+        "electron-builder": "^22.4.0"
+    },
+    "build": {
+        "appId": "PresentationDrawer",
+        "productName": "PresentationDrawer",
+        "copyright": "Marcin Domański",
+        "files": [
+            "**/*",
+            "images/icon.png"
+        ],
+        "extraFiles": [
+            {
+                "filter": [
+                    "./settings.json"
+                ]
+            }
+        ],
+        "win": {
+            "target": "portable",
+            "icon": "build/icon.ico"
+        },
+        "portable": {
+            "artifactName": "presentation_drawer.exe"
+        }
+    },
+    "dependencies": {}
+}
