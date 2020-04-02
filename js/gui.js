@@ -1,10 +1,8 @@
 import globalState from "./global-state.js";
 import storage from "./utils/localStorage.js";
-import config from "./config.js";
-import board from "./board.js";
-import toolFactor from "./tools.js";
+import pubsub from "./pubsub.js";
 
-class Gui {
+export default class Gui {
     constructor() {
         this.elementGui = document.querySelector("#gui");
         this.generateHTML();
@@ -13,10 +11,18 @@ class Gui {
         this.elementColorCurrent = document.querySelector("#guiColorsCurrent");
 
         this.init();
+
+        const guiID = Symbol();
+
+        pubsub.subscribe("gui-toggleHelpKey", guiID, () => this.toggleGuiHelpKeys());
+        pubsub.subscribe("tool-type", guiID, () => this.updateInfo());
+        pubsub.subscribe("tool-color", guiID, () => this.updateInfo());
+        pubsub.subscribe("tool-size", guiID, () => this.updateInfo());
+        pubsub.subscribe("gui-hide", guiID, () => this.toggleGui())
     }
 
     init() {
-        if (!config.interactiveGui) {
+        if (!globalState.config.interactiveGui) {
             this.elementGui.classList.add("gui-non-interactive");
         }
 
@@ -24,7 +30,7 @@ class Gui {
             this.elementGui.classList.add("gui-hidden");
         }
 
-        if (config.guiTheme === "light") {
+        if (globalState.config.guiTheme === "light") {
             this.elementGui.classList.add("gui--white");
         }
 
@@ -146,7 +152,7 @@ class Gui {
         const ul = document.createElement("ul");
         ul.classList.add("gui-tools");
 
-        for (const el of config.keys.tools) {
+        for (const el of globalState.config.keys.tools) {
             const li = document.createElement("li");
             li.dataset.tool = el.tool;
 
@@ -156,21 +162,20 @@ class Gui {
             li.append(svgCnt);
             li.addEventListener("click", e => {
                 if (globalState.tool !== null) {
-                    board.clearCanvas2();
+                    pubsub.publish("board-clearCanvas2");
                     globalState.tool.destructor();
                 }
 
-                globalState.toolName = el.tool;
-                globalState.tool = toolFactor.generateTool(globalState.toolName);
-                globalState.toolSubscribers.emit();
+                components.tool.generateTool(li.dataset.tool);
+                pubsub.publish("tool-type");
             });
 
             const key = document.createElement("span");
             key.classList.add("gui-tools-key");
             key.innerHTML = `
-            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30">
-            <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle">${el.key}</text>
-            </svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30">
+                <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle">${el.key}</text>
+                </svg>
             `;
 
             li.append(key);
@@ -200,7 +205,7 @@ class Gui {
         const ul = document.createElement("ul");
         ul.classList.add("gui-colors-list");
 
-        for (const el of config.keys.colors) {
+        for (const el of globalState.config.keys.colors) {
             const li = document.createElement("li");
             li.classList.add("color");
             li.dataset.color = el.color;
@@ -211,7 +216,7 @@ class Gui {
                 [...li].forEach(el => el.classList.remove("active"));
                 this.classList.add("active");
                 globalState.color = this.dataset.color;
-                globalState.colorSubscribers.emit();
+                pubsub.publish("tool-color");
             });
         }
 
@@ -231,6 +236,8 @@ class Gui {
     }
 
     toggleGui() {
+        const keyInStorage = "guiHidden";
+
         this.elementGui.classList.toggle("gui-hidden");
         if (this.elementGui.classList.contains("gui-hidden")) {
             storage.set(keyInStorage);
@@ -239,5 +246,3 @@ class Gui {
         }
     }
 }
-
-export default new Gui();

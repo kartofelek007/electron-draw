@@ -1,8 +1,7 @@
 import globalState from "./global-state.js";
-import {ScreenCapture} from "./utils/ScreenCapture.js";
-const sc = new ScreenCapture();
+import pubsub from "./pubsub.js";
 
-class Board {
+export default class Board {
     constructor(selector) {
         const el = document.querySelector("#main");
         this.canvas = new fabric.Canvas(el, {
@@ -16,8 +15,18 @@ class Board {
         this.canvas.selectionLineWidth = 2;
         this.canvas.freeDrawingCursor = "none";
         fabric.minCacheSideLimit = 256 * 4;
+
         this.createSecondCanvas();
         this.cursorHidden();
+
+        const boardID = Symbol();
+        pubsub.subscribe("board-clearCanvas1", boardID, () => this.clearCanvas1());
+        pubsub.subscribe("board-clearCanvas2", boardID, () => this.clearCanvas2());
+        pubsub.subscribe("board-updateCanvas2", boardID, () => this.updateCanvas2());
+
+        pubsub.subscribe("tool-type", boardID, () => this.updateCanvas2());
+        pubsub.subscribe("tool-color", boardID, () => this.updateCanvas2());
+        pubsub.subscribe("tool-size", boardID, () => this.updateCanvas2());
     }
 
     cursorHidden() {
@@ -33,7 +42,6 @@ class Board {
         this.canvas2.id = "second";
         this.canvas2.width = window.innerWidth;
         this.canvas2.height = window.innerHeight;
-
         this.ctx2 = this.canvas2.getContext("2d");
         document.body.appendChild(this.canvas2);
     }
@@ -42,7 +50,7 @@ class Board {
         this.ctx2.clearRect(0, 0, this.canvas2.width, this.canvas2.height);
     }
 
-    clearScreen() {
+    clearCanvas1() {
         this.canvas.discardActiveObject();
         this.canvas.remove(...this.canvas.getObjects());
         this.canvas.renderAll();
@@ -85,4 +93,4 @@ class Board {
     }
 }
 
-export default new Board("#main");
+

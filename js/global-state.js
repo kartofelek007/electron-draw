@@ -1,5 +1,3 @@
-import config from "./config.js";
-
 export default {
     color: "red",
     size: 10,
@@ -18,52 +16,18 @@ export default {
     },
 
     decreaseWidth() {
-        this.size -= config.size.step;
-        if (this.size < config.size.min) {
-            this.size = config.size.min;
+        this.size -= this.config.size.step;
+        if (this.size < this.config.size.min) {
+            this.size = this.config.size.min;
         }
     },
 
     increaseWidth() {
-        this.size += config.size.step;
-        if (this.size > config.size.max) {
-            this.size = config.size.max;
+        this.size += this.config.size.step;
+        if (this.size > this.config.size.max) {
+            this.size = this.config.size.max;
         }
     },
 
-    toolSubscribers: {
-        subscribers : new Map(),
-        subscribe(id, fn) {
-            this.subscribers.set(id, fn);
-        },
-        emit() {
-            for (const [key, value] of this.subscribers.entries()) {
-                value();
-            }
-        }
-    },
-
-    colorSubscribers: {
-        subscribers : new Map(),
-        subscribe(id, fn) {
-            this.subscribers.set(id, fn);
-        },
-        emit() {
-            for (const [key, value] of this.subscribers.entries()) {
-                value();
-            }
-        }
-    },
-
-    sizeSubscribers: {
-        subscribers : new Map(),
-        subscribe(id, fn) {
-            this.subscribers.set(id, fn);
-        },
-        emit(e) {
-            for (const [key, value] of this.subscribers.entries()) {
-                value(e);
-            }
-        }
-    },
+    config : {}
 }

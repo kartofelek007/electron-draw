@@ -1,11 +1,9 @@
-import board from "./board.js";
+import pubsub from "./pubsub.js";
 import globalState from "./global-state.js";
-import toolFactor from "./tools.js";
-import config from "./config.js";
-import gui from "./gui.js";
 import storage from "./utils/localStorage.js";
 import { savePrintScreen } from "./utils/savePrintScreen.js";
 const { ipcRenderer } = require('electron');
+import components from "./componets.js";
 
 function metaKeysPress(e) {
     return e.ctrlKey || e.shiftKey || e.altKey || e.metaKey
@@ -19,32 +17,32 @@ const functionsToBind = {
 
     keyUpClearScreen(e) {
         if (globalState.canChangeTool && globalState.canChangeColor) {
-            if (e.key.toLowerCase() === config.keys.clearScreen && !metaKeysPress(e)) {
-                board.clearScreen();
+            if (e.key.toLowerCase() === globalState.config.keys.clearScreen && !metaKeysPress(e)) {
+                pubsub.publish("board-clearCanvas1");
             }
         }
     },
 
     keyUpGuiHelp(e) {
         if (e.key === "?" && metaKeysPress(e) && globalState.canChangeColor && globalState.canChangeSize && globalState.canChangeTool) {
-            gui.toggleGuiHelpKeys();
+            pubsub.publish("gui-toggleHelpKey");
         }
     },
 
     keyUpTool(e) {
-        const keys = config.keys.tools.map(el => el.key);
+        const keys = globalState.config.keys.tools.map(el => el.key);
         if (globalState.canChangeTool) {
             if (keys.includes(e.key)) {
-                config.keys.tools.forEach(el => {
+                globalState.config.keys.tools.forEach(el => {
                     if (e.key === el.key && globalState.tool !== el.tool) {
                         if (globalState.tool !== null) {
-                            board.clearCanvas2();
+                            pubsub.publish("board-clearCanvas2");
                             globalState.tool.destructor();
                         }
 
                         globalState.toolName = el.tool;
-                        globalState.tool = toolFactor.generateTool(globalState.toolName);
-                        globalState.toolSubscribers.emit();
+                        globalState.tool = components.tools.generateTool(globalState.toolName);
+                        pubsub.publish("tool-type");
                     }
                 });
             }
@@ -52,13 +50,13 @@ const functionsToBind = {
     },
 
     keyUpColor(e) {
-        const keys = config.keys.colors.map(el => el.key);
+        const keys = globalState.config.keys.colors.map(el => el.key);
         if (globalState.canChangeColor) {
             if (keys.includes(e.key)) {
-                config.keys.colors.forEach(el => {
+                globalState.config.keys.colors.forEach(el => {
                     if (e.key === el.key && !metaKeysPress(e)) {
                         globalState.color = el.color;
-                        globalState.colorSubscribers.emit();
+                        pubsub.publish("tool-color");
                     }
                 });
 
@@ -72,13 +70,13 @@ const functionsToBind = {
                 if (e.deltaY > 0) globalState.decreaseWidth();
                 if (e.deltaY < 0) globalState.increaseWidth();
             }
-            globalState.sizeSubscribers.emit(e);
+            pubsub.publish("tool-size", e);
         }
     },
 
     whiteBoard(e) {
         if (globalState.canChangeTool && globalState.canChangeColor) {
-            if (e.key === config.keys.whiteBoard && !metaKeysPress(e)) {
+            if (e.key === globalState.config.keys.whiteBoard && !metaKeysPress(e)) {
                 document.body.classList.toggle("white-board-mode");
             }
         }
@@ -87,25 +85,23 @@ const functionsToBind = {
     showHideGui(e) {
         if (globalState.canChangeTool && globalState.canChangeColor && globalState.canChangeSize) {
             if (e.key === '`') {
-                gui.elementGui.classList.toggle("gui-hidden");
-                storage.toggle("guiHidden");
+                pubsub.publish("gui-hide");
             }
         }
     },
 
     escape(e) {
         if (e.key.toUpperCase() === "ESCAPE" && globalState.canChangeTool) {
-            board.clearScreen();
+            pubsub.publish("board-clearCanvas1");
 
             setTimeout(() => {
                 if (globalState.tool !== null) {
-                    board.clearCanvas2();
+                    pubsub.publish("board-clearCanvas2");
                     globalState.tool.destructor();
                 }
 
-                globalState.toolName = "brush";
-                globalState.tool = toolFactor.generateTool(globalState.toolName);
-                globalState.toolSubscribers.emit();
+                components["tool"].generateTool("brush");
+                pubsub.publish("tool-type");
 
                 document.body.classList.remove("white-board-mode");
                 ipcRenderer.sendSync('escPressed', {});
@@ -121,7 +117,7 @@ const functionsToBind = {
     },
 
     saveScreenShoot(e) {
-        if (e.key === config.keys.saveKey) {
+        if (e.key === globalState.config.keys.saveKey) {
             savePrintScreen();
         }
     },
@@ -152,7 +148,7 @@ class Control {
 
         //TODO: poprawic to
         ipcRenderer.on('clearScreenFromMain' , function(event , data) {
-            board.updateCanvas2();
+            pubsub.publish("board-updateCanvas2");
             ipcRenderer.sendSync('afterClearAndToggleWindow', {});
         });
     }
@@ -184,4 +180,4 @@ class Control {
     }
 }
 
-export default new Control;
+export default Control;

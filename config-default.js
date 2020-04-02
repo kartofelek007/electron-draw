@@ -1,7 +1,4 @@
-const fs = require('fs');
-const path = require("path");
-
-export default {
+module.exports = {
     "toggleKey" : "F7",
 
     "size": {
@@ -32,7 +29,6 @@ export default {
             {"key" : "v", "name": "violet", "color" : "#7200DA"},
             {"key" : "d", "name": "dark", "color" : "#311e3e"},
             {"key" : "w", "name": "white", "color" : "#fffcf0"},
-
         ],
 
         "tools" : [
@@ -45,15 +41,4 @@ export default {
             {"key": "0", "name": "spot", "tool": "spot"}
         ]
     }
-}
-
-let config = {};
-
-try {
-    const rawData = fs.readFileSync("./settings.json");
-    config = JSON.parse(rawData);
-} catch(err) {
-    config = {...defaultConfig};
-}
-
-export default config;
+};

@@ -41,5 +41,7 @@
             "artifactName": "presentation_drawer.exe"
         }
     },
-    "dependencies": {}
+    "dependencies": {
+        "jsonschema": "^1.2.6"
+    }
 }

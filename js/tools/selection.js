@@ -1,8 +1,7 @@
-import board from "../board.js";
 import globalState from "../global-state.js";
 import {hexToRGBA} from "../utils/colors.js";
-import config from "../config.js";
-
+import pubsub from "../pubsub.js";
+import components from "../componets.js";
 
 export class Selection {
     constructor() {
@@ -13,8 +12,8 @@ export class Selection {
 
         this.bindEvents();
 
-        board.enableSelection();
-        board.cursorDefault();
+        components.board.enableSelection();
+        components.board.cursorDefault();
 
         const otherTypeKey = Symbol();
 
@@ -32,9 +31,9 @@ export class Selection {
             });
         };
 
-        globalState.colorSubscribers.subscribe(this.idSubscribe, () => {
-            if (board.canvas.getActiveObject()) {
-                loopThroughElements(board.canvas.getActiveObjects(), {
+        pubsub.subscribe("tool-color", this.idSubscribe, () => {
+            if (components.board.canvas.getActiveObject()) {
+                loopThroughElements(components.board.canvas.getActiveObjects(), {
                     "i-text" : function(el) {
                         el.set("fill", globalState.color);
                     },
@@ -50,37 +49,36 @@ export class Selection {
                         el.set("stroke", globalState.color);
                     }
                 });
-                board.canvas.renderAll();
+                components.board.canvas.renderAll();
             }
         });
 
-        globalState.sizeSubscribers.subscribe(this.idSubscribe, (e) => {
-            console.log(e);
-            if (board.canvas.getActiveObject()) {
-                board.canvas.getActiveObjects().forEach(el => {
+        pubsub.subscribe("tool-size", this.idSubscribe, (e) => {
+            if (components.board.canvas.getActiveObject()) {
+                components.board.canvas.getActiveObjects().forEach(el => {
                     const type = el.get("type");
                     if (type === "i-text") {
                         let size = el.get('fontSize');
-                        size += (e.deltaY < 0)? -config.size.step : config.size.step;
-                        size = Math.min(size, config.size.max + 10);
-                        size = Math.max(size, config.size.min + 10);
+                        size += (e.deltaY > 0)? -globalState.config.size.step : globalState.config.size.step;
+                        size = Math.min(size, globalState.config.size.max + 10);
+                        size = Math.max(size, globalState.config.size.min + 10);
                         el.set('fontSize', size);
                     } else if (type === "group") {
                     } else {
                         let size = el.get('strokeWidth');
-                        size += (e.deltaY < 0)? -config.size.step : config.size.step;
-                        size = Math.min(size, config.size.max);
-                        size = Math.max(size, config.size.min);
+                        size += (e.deltaY > 0)? -globalState.config.size.step : globalState.config.size.step;
+                        size = Math.min(size, globalState.config.size.max);
+                        size = Math.max(size, globalState.config.size.min);
                         el.set("strokeWidth", size);
                     }
                 });
 
-                const selection = board.canvas.getActiveObject();
+                const selection = components.board.canvas.getActiveObject();
 
                 if (selection.type === 'activeSelection') {
                     selection.addWithUpdate()
                 }
-                board.canvas.requestRenderAll();
+                components.board.canvas.requestRenderAll();
             }
         })
     }
@@ -88,69 +86,63 @@ export class Selection {
     destructor() {
         this._clipboard = null;
 
-        board.disableSelection();
-        board.cursorHidden();
+        components.board.disableSelection();
+        components.board.cursorHidden();
 
         this.unbindEvents();
 
-        if (globalState.colorSubscribers[this.idSubscribe]) delete globalState.colorSubscribers[this.idSubscribe];
-        if (globalState.toolSubscribers[this.idSubscribe]) delete globalState.toolSubscribers[this.idSubscribe];
-        if (globalState.sizeSubscribers[this.idSubscribe]) delete globalState.sizeSubscribers[this.idSubscribe];
+        pubsub.unsubscribe("tool-color", this.idSubscribe);
+        pubsub.unsubscribe("tool-size", this.idSubscribe);
+        pubsub.unsubscribe("tool-tool", this.idSubscribe);
     }
 
     bindEvents() {
-        //board.canvas.on("object:selected", function(o) {
-        //    o.target.bringToFront();
-        //});
         document.addEventListener("keydown", this.onKeyDown);
         document.addEventListener("keyup", this.onKeyUp);
     }
 
     unbindEvents() {
-        //board.canvas.off("object:selected", function(o) {
-        //    o.target.bringToFront();
-        //});
         document.removeEventListener("keydown", this.onKeyDown);
         document.removeEventListener("keyup", this.onKeyUp);
     }
 
     onKeyUp(e) {
         if (e.key.toLowerCase() === "delete") {
-            if (board.canvas.getActiveObject()) {
-                board.canvas.getActiveObjects().forEach(el => {
-                    board.canvas.remove(el);
+            if (components.board.canvas.getActiveObject()) {
+                components.board.canvas.getActiveObjects().forEach(el => {
+                    components.board.canvas.remove(el);
                     el.strokeWidth = globalState.size
                 });
-                board.canvas.discardActiveObject().renderAll()
+                components.board.canvas.discardActiveObject().renderAll()
             }
         }
 
         if (e.key === "[" && globalState.canChangeColor && globalState.canChangeSize && globalState.canChangeTool) {
-            board.canvas.getActiveObject().sendBackwards();
+            components.board.canvas.getActiveObject().sendBackwards();
         }
         if (e.key === "]" && globalState.canChangeColor && globalState.canChangeSize && globalState.canChangeTool) {
-            board.canvas.getActiveObject().bringForward();
+            components.board.canvas.getActiveObject().bringForward();
         }
 
         if (e.key.toLowerCase() === "escape") {
             console.log('escape');
-            board.canvas.discardActiveObject();
-            board.canvas.requestRenderAll();
+            components.board.canvas.discardActiveObject();
+            components.board.canvas.requestRenderAll();
         }
 
         if (e.key.toLowerCase() === "a" && e.ctrlKey) {
-            board.canvas.discardActiveObject();
-            const sel = new fabric.ActiveSelection(board.canvas.getObjects(), {
-              canvas: board.canvas
+            components.board.canvas.discardActiveObject();
+            const sel = new fabric.ActiveSelection(components.board.canvas.getObjects(), {
+              canvas: components.board.canvas
             });
-            board.canvas.setActiveObject(sel);
-            board.canvas.requestRenderAll();
-            //board.canvas.
+            components.board.canvas.setActiveObject(sel);
+            components.board.canvas.requestRenderAll();
+            //components.board.canvas.
         }
 
         if (e.key.toLowerCase() === "c" && e.ctrlKey) {
-            if (board.canvas.getActiveObject()) {
-                board.canvas.getActiveObject().clone(cloned => {
+            if (components.board.canvas.getActiveObject()) {
+                components.board.canvas.getActiveObject().clone(cloned => {
                     this._clipboard = cloned;
                 });
             }
@@ -158,8 +150,8 @@ export class Selection {
 
         if (e.key.toLowerCase() === "v" && e.ctrlKey) {
             if (this._clipboard)
-            this._clipboard.clone(clonedObj => {
-                board.canvas.discardActiveObject();
+            this._clipcomponents.board.clone(clonedObj => {
+                components.board.canvas.discardActiveObject();
                 clonedObj.set({
                     left: clonedObj.left + 20,
                     top: clonedObj.top + 20,
@@ -168,19 +160,19 @@ export class Selection {
 
                 if (clonedObj.type === 'activeSelection') {
                     // active selection needs a reference to the canvas.
-                    clonedObj.canvas = board.canvas;
+                    clonedObj.canvas = components.board.canvas;
                     clonedObj.forEachObject(obj => {
-                        board.canvas.add(obj);
+                        components.board.canvas.add(obj);
                     });
                     // this should solve the unselectability
                     clonedObj.setCoords();
                 } else {
-                    board.canvas.add(clonedObj);
+                    components.board.canvas.add(clonedObj);
                 }
-                this._clipboard.top += 20;
-                this._clipboard.left += 20;
-                board.canvas.setActiveObject(clonedObj);
-                board.canvas.requestRenderAll();
+                this._clipcomponents.board.top += 20;
+                this._clipcomponents.board.left += 20;
+                components.board.canvas.setActiveObject(clonedObj);
+                components.board.canvas.requestRenderAll();
             });
         }
 
@@ -190,27 +182,27 @@ export class Selection {
     onKeyDown(e) {
         if (e.key.toLowerCase() === "g" && e.ctrlKey && !e.shiftKey) {
             e.preventDefault();
-            if (!board.canvas.getActiveObject()) {
+            if (!components.board.canvas.getActiveObject()) {
                 return;
             }
-            if (board.canvas.getActiveObject().type !== 'activeSelection') {
+            if (components.board.canvas.getActiveObject().type !== 'activeSelection') {
                 return;
             }
-            board.canvas.getActiveObject().toGroup();
-            board.canvas.requestRenderAll();
+            components.board.canvas.getActiveObject().toGroup();
+            components.board.canvas.requestRenderAll();
         }
 
         if (e.key.toLowerCase() === "g" && e.shiftKey && e.ctrlKey) {
             e.preventDefault();
 
-            if (!board.canvas.getActiveObject()) {
+            if (!components.board.canvas.getActiveObject()) {
                 return;
             }
-            if (board.canvas.getActiveObject().type !== 'group') {
+            if (components.board.canvas.getActiveObject().type !== 'group') {
                 return;
             }
-            board.canvas.getActiveObject().toActiveSelection();
-            board.canvas.requestRenderAll();
+            components.board.canvas.getActiveObject().toActiveSelection();
+            components.board.canvas.requestRenderAll();
 
         }
     }

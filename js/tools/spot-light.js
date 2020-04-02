@@ -1,17 +1,18 @@
-import board from "../board.js";
 import globalState from "../global-state.js";
+import pubsub from "../pubsub.js";
+import components from "../componets.js";
 
 export class SpotLight {
     constructor() {
         this.idSubscribe = Symbol();
 
-        board.disableSelection();
+        components.board.disableSelection();
 
         this._size = 100;
         this._maxSize = 200;
         this._minSize = 100;
 
-        globalState.sizeSubscribers.subscribe(this.idSubscribe, (e) => {
+        pubsub.subscribe("tool-size", this.idSubscribe, (e) => {
             this.changeZoom(e);
         });
 
@@ -23,9 +24,9 @@ export class SpotLight {
     destructor() {
         this.unbindEvents();
 
-        if (globalState.colorSubscribers[this.idSubscribe]) delete globalState.colorSubscribers[this.idSubscribe];
-        if (globalState.toolSubscribers[this.idSubscribe]) delete globalState.toolSubscribers[this.idSubscribe];
-        if (globalState.sizeSubscribers[this.idSubscribe]) delete globalState.sizeSubscribers[this.idSubscribe];
+        pubsub.unsubscribe("tool-color", this.idSubscribe);
+        pubsub.unsubscribe("tool-size", this.idSubscribe);
+        pubsub.unsubscribe("tool-tool", this.idSubscribe);
     }
 
     bindEvents() {
@@ -48,15 +49,15 @@ export class SpotLight {
     }
 
     onMouseMove(e) {
-        board.clearCanvas2();
-        board.ctx2.fillStyle = "rgba(0,0,0,0.8)";
-        board.ctx2.fillRect(0, 0, board.canvas2.width, board.canvas2.height);
-        board.ctx2.save();
-        board.ctx2.beginPath();
-        board.ctx2.arc(e.pageX, e.pageY, this._size, 0, 2 * Math.PI);
-        board.ctx2.clip();
-        board.clearCanvas2();
-        board.ctx2.restore();
+        components.board.clearCanvas2();
+        components.board.ctx2.fillStyle = "rgba(0,0,0,0.8)";
+        components.board.ctx2.fillRect(0, 0, components.board.canvas2.width, components.board.canvas2.height);
+        components.board.ctx2.save();
+        components.board.ctx2.beginPath();
+        components.board.ctx2.arc(e.pageX, e.pageY, this._size, 0, 2 * Math.PI);
+        components.board.ctx2.clip();
+        components.board.clearCanvas2();
+        components.board.ctx2.restore();
     }
 
 }

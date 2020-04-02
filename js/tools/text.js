@@ -1,20 +1,21 @@
-import board from "../board.js";
 import globalState from "../global-state.js";
+import pubsub from "../pubsub.js";
+import components from "../componets.js";
 
 export class Text {
     constructor() {
         this.idSubscribe = Symbol();
 
-        board.disableSelection();
+        components.board.disableSelection();
 
         this.mouseDown = this.mouseDown.bind(this);
         this.bindEvents();
         this._text = null;
 
-        globalState.sizeSubscribers.subscribe(this.idSubscribe, () => {
+        pubsub.subscribe("tool-size", this.idSubscribe, () => {
             if (this._text !== null) {
                 this._text.set('fontSize', globalState.size + 20);
-                board.canvas.requestRenderAll();
+                components.board.canvas.requestRenderAll();
             }
         });
     }
@@ -22,18 +23,18 @@ export class Text {
     destructor() {
         this.unbindEvents();
         this._text = null;
-        if (globalState.colorSubscribers[this.idSubscribe]) delete globalState.colorSubscribers[this.idSubscribe];
-        if (globalState.toolSubscribers[this.idSubscribe]) delete globalState.toolSubscribers[this.idSubscribe];
-        if (globalState.sizeSubscribers[this.idSubscribe]) delete globalState.sizeSubscribers[this.idSubscribe];
-    }
+
+        pubsub.unsubscribe("tool-color", this.idSubscribe);
+        pubsub.unsubscribe("tool-size", this.idSubscribe);
+        pubsub.unsubscribe("tool-tool", this.idSubscribe);    }
 
     bindEvents() {
-        board.canvas.on("mouse:down", this.mouseDown);
+        components.board.canvas.on("mouse:down", this.mouseDown);
         document.addEventListener("mousemove", this.drawHelper);
     }
 
     unbindEvents() {
-        board.canvas.off("mouse:down", this.mouseDown);
+        components.board.canvas.off("mouse:down", this.mouseDown);
         document.removeEventListener("mousemove", this.drawHelper);
     }
 
@@ -41,19 +42,19 @@ export class Text {
         const x = e.pageX;
         const y = e.pageY;
 
-        board.clearCanvas2();
-        board.ctx2.save();
-        board.ctx2.beginPath();
-        board.ctx2.fillStyle = globalState.color;
-        board.ctx2.globalAlpha = 1;
-        board.ctx2.rect(x, y - ((globalState.size + 20) / 2), 5, globalState.size + 20);
-        board.ctx2.fill();
-        board.ctx2.closePath();
-        board.ctx2.restore();
+        components.board.clearCanvas2();
+        components.board.ctx2.save();
+        components.board.ctx2.beginPath();
+        components.board.ctx2.fillStyle = globalState.color;
+        components.board.ctx2.globalAlpha = 1;
+        components.board.ctx2.rect(x, y - ((globalState.size + 20) / 2), 5, globalState.size + 20);
+        components.board.ctx2.fill();
+        components.board.ctx2.closePath();
+        components.board.ctx2.restore();
     }
 
     mouseDown(o) {
-        const pointer = board.canvas.getPointer(o.e);
+        const pointer = components.board.canvas.getPointer(o.e);
 
         this._text = new fabric.IText('text', {
             fontFamily: 'Open Sans',
@@ -71,8 +72,8 @@ export class Text {
         globalState.canChangeColor = false;
         globalState.canChangeTool = false;
 
-        board.canvas.add(this._text);
-        board.canvas.setActiveObject(this._text);
+        components.board.canvas.add(this._text);
+        components.board.canvas.setActiveObject(this._text);
 
         this._text.enterEditing();
         this._text.selectAll();
@@ -91,13 +92,13 @@ export class Text {
             }, 300);
 
             if (globalState.toolName !== "selection") {
-                board.disableSelection();
+                components.board.disableSelection();
             }
 
             if (this._text) {
                 const reg = /^\s$/g;
                 if (reg.test(this._text.text)) {
-                    board.canvas.remove(this._text);
+                    components.board.canvas.remove(this._text);
                 }
             }
         });
@@ -108,7 +109,7 @@ export class Text {
             globalState.canChangeTool = false;
 
             if (globalState.toolName !== "selection") {
-                board.disableSelection();
+                components.board.disableSelection();
             }
         });
 

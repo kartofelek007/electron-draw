@@ -1,6 +1,5 @@
 const fs = require('fs');
 const dialog = require('electron').remote.dialog;
-import config from "../config.js";
 import {ScreenCapture} from "./ScreenCapture.js";
 const sc = new ScreenCapture();
 const { ipcRenderer } = require('electron');
@@ -56,7 +55,7 @@ export async function savePrintScreen() {
     const app = require('electron').remote.app;
     const pathApp = app.getAppPath();
 
-    if (config.askToSaveScreenShoot) {
+    if (globalState.config.askToSaveScreenShoot) {
         path = ipcRenderer.sendSync("getFolderToSave", "");
     } else {
         path = pathApp + "/screenshoots";
@@ -72,6 +71,5 @@ export async function savePrintScreen() {
     
     //capture ans save
     const filePath = generateFileName(path);
-    console.log(filePath);
     await captureAndSave(filePath);
 }

@@ -1,31 +1,65 @@
-import board from "./board.js";
-import controls from "./control.js";
+import Board from "./Board.js";
+import Controls from "./Control.js";
 import globalState from "./global-state.js";
-import tools from "./tools.js";
-import gui from "./gui.js";
-import config from "./config.js";
+import ToolsFactory from "./ToolsFactory.js";
+import Gui from "./Gui.js";
+import pubsub from "./pubsub.js";
+import components from "./componets.js";
+const { dialog } = require('electron').remote;
 
-globalState.toolName = "brush";
-globalState.tool = tools.generateTool(globalState.toolName);
+//config --------------
+const fs = require('fs');
+const defaultConfig = require("./config-default.js");
+let config = {...defaultConfig};
+
+const { app } = require("electron").remote;
+const fileUrl = app.getPath("appData") + "/" + "presentation-draw-settings.json";
+
+try {
+    const rawData = fs.readFileSync(fileUrl, err => {});
+    config = JSON.parse(rawData);
+} catch(err) {
+}
+
+const configParser = require("./check-config.js");
+const configTest = configParser(config);
+
+if (configTest.errors.length) {
+    const msg = `
+        Incorrect format of config file.
+        Correct below in %APPDATA%/presentation-draw-settings.json file:
+
+        ${configTest.errors.map(el => {
+            return el.property.replace("instance.", "") + " " + el.message
+        }).join("\n")}
+    `;
+    dialog.showMessageBoxSync({
+        type: "error",
+        title: "Incorrect config data",
+        message: msg
+    });
+    app.quit();
+} else {
+
+    globalState.config = config;
+    components.board = new Board("#main");
+    components.controls = new Controls(config);
+    components.tools = new ToolsFactory();
+    components.gui = new Gui();
+
+    //tool ========================
+    globalState.toolName = "brush";
+    globalState.tool = components["tools"].generateTool("brush", components["board"]);
+    pubsub.publish("tool-type");
+
+    //colors ========================
+    globalState.color = config.keys.colors[0].color;
+    pubsub.publish("tool-color");
+
+    //size ========================
+    globalState.size = config.size.default;
+    pubsub.publish("tool-size");
 
 
-//tool ========================
-globalState.toolSubscribers.subscribe(Symbol(), () => {
-    gui.updateInfo();
-    board.updateCanvas2();
-});
-globalState.toolSubscribers.emit();
+}
 
-//colors ========================
-globalState.colorSubscribers.subscribe(Symbol(), () => {
-    gui.updateInfo();
-    board.updateCanvas2();
-});
-globalState.color = config.keys.colors[0].color;
-globalState.colorSubscribers.emit();
-
-//size ========================
-globalState.sizeSubscribers.subscribe(Symbol(), () => {
-    board.updateCanvas2();
-});
-globalState.sizeSubscribers.emit();
