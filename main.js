@@ -45,32 +45,33 @@ if (configTest.errors.length) {
     const myApp = {
         mainWindow: false,
         contextMenu: false,
-        windowOpen: false,
+        windowOpen: true,
 
         async showFolderSelectPopup() {
-            this.toggleWindow();
+            this.toggleWindow(false);
             const path = await dialog.showOpenDialog({
                 title: 'Select folder to save screenshoot',
                 properties: ["openDirectory"]
             });
-            this.toggleWindow();
+            this.toggleWindow(true);
             return path.filePaths[0];
         },
 
-        toggleWindow() {
-            if (this.windowOpen) {
-                this.windowOpen = false;
+        toggleWindow(show) {
+            this.windowOpen = show;
+
+            if (!show) {
                 this.mainWindow.hide();
             } else {
-                this.windowOpen = true;
-                this.mainWindow.show();
                 this.mainWindow.setFullScreen(true);
+                this.mainWindow.show();
             }
         },
 
         makeCommunicationWithRender() {
             ipcMain.on('escPressed', (event, arg) => {
-                this.toggleWindow();
+
+                this.toggleWindow(false);
                 event.returnValue = ''
             });
 
@@ -80,38 +81,53 @@ if (configTest.errors.length) {
             });
 
             ipcMain.on('getFolderToSave', async (event, arg) => {
-                const path = await this.showFolderSelectPopup();
-                event.returnValue = path;
+                event.returnValue = await this.showFolderSelectPopup();
             });
         },
 
         createWindow() {
+
+            //FIXME: fullScreen zostawia border po bokach na ktorych nei dziala kursor
+            const { screen } = require("electron");
+            const { width: screenW, height: screenH } = screen.getPrimaryDisplay().workAreaSize;
+
             this.mainWindow = new BrowserWindow({
                 transparent: true,
                 frame: false,
                 alwaysOnTop: true,
                 fullscreen: true,
                 resizable: false,
-                show: false,
                 icon: path.join(__dirname, 'images/icon.png'),
+                kiosk: true,
                 webPreferences: {
                     nodeIntegration: true
                 }
             });
+
             this.mainWindow.loadFile('index.html');
 
-            this.mainWindow.hide();
+
+            if (config.startHidden) {
+                this.mainWindow.hide();
+                this.windowOpen = false;
+            }
 
             if (!debug) {
                 Menu.setApplicationMenu(null);
             }
+
+            //this.mainWindow.on("blur", e => {
+            //    this.toggleWindow(false);
+            //});
+
         },
 
         bindKeys() {
             //F7 - chowa aplikację - dość ważna funkcjonalność.
             //jak nie zadziała nie odpalam aplikacji
             const reg1 = globalShortcut.register(keyToggle, () => {
-                this.toggleWindow();
+                this.windowOpen = !this.windowOpen;
+                this.toggleWindow(this.windowOpen);
             });
 
 
@@ -120,9 +136,6 @@ if (configTest.errors.length) {
 
                 if (!reg1) {
                     msg += config.toggleKey + " - klawisze służące do pokazywania/ukrywania okna aplikacji\n";
-                }
-
-                if (!reg1) {
                     msg += "\nZmień je na inne w pliku settings.json (toggleKey) i spróbuj ponownie"
                 }
 
@@ -179,7 +192,8 @@ if (configTest.errors.length) {
             tray = new Tray(imgPath);
             tray.setToolTip('PresentationDrawer');
             tray.on('click', () => {
-                this.toggleWindow();
+                this.windowOpen = !this.windowOpen;
+                this.toggleWindow(this.windowOpen);
             });
             tray.setContextMenu(this.contextMenu);
         },

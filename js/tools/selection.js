@@ -141,6 +141,7 @@ export class Selection {
         }
 
         if (e.key.toLowerCase() === "c" && e.ctrlKey) {
+            console.log('test');
             if (components.board.canvas.getActiveObject()) {
                 components.board.canvas.getActiveObject().clone(cloned => {
                     this._clipboard = cloned;
@@ -149,31 +150,33 @@ export class Selection {
         }
 
         if (e.key.toLowerCase() === "v" && e.ctrlKey) {
-            if (this._clipboard)
-            this._clipcomponents.board.clone(clonedObj => {
-                components.board.canvas.discardActiveObject();
-                clonedObj.set({
-                    left: clonedObj.left + 20,
-                    top: clonedObj.top + 20,
-                    evented: true
-                });
-
-                if (clonedObj.type === 'activeSelection') {
-                    // active selection needs a reference to the canvas.
-                    clonedObj.canvas = components.board.canvas;
-                    clonedObj.forEachObject(obj => {
-                        components.board.canvas.add(obj);
+            if (this._clipboard) {
+                console.log('test2');
+                this._clipboard.clone(clonedObj => {
+                    components.board.canvas.discardActiveObject();
+                    clonedObj.set({
+                        left: clonedObj.left + 20,
+                        top: clonedObj.top + 20,
+                        evented: true
                     });
-                    // this should solve the unselectability
-                    clonedObj.setCoords();
-                } else {
-                    components.board.canvas.add(clonedObj);
-                }
-                this._clipcomponents.board.top += 20;
-                this._clipcomponents.board.left += 20;
-                components.board.canvas.setActiveObject(clonedObj);
-                components.board.canvas.requestRenderAll();
-            });
+
+                    if (clonedObj.type === 'activeSelection') {
+                        // active selection needs a reference to the canvas.
+                        clonedObj.canvas = components.board.canvas;
+                        clonedObj.forEachObject(obj => {
+                            components.board.canvas.add(obj);
+                        });
+                        // this should solve the unselectability
+                        clonedObj.setCoords();
+                    } else {
+                        components.board.canvas.add(clonedObj);
+                    }
+                    this._clipboard.top += 20;
+                    this._clipboard.left += 20;
+                    components.board.canvas.setActiveObject(clonedObj);
+                    components.board.canvas.requestRenderAll();
+                });
+            }
         }
 
 

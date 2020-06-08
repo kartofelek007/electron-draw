@@ -34,14 +34,8 @@ const functionsToBind = {
         if (globalState.canChangeTool) {
             if (keys.includes(e.key)) {
                 globalState.config.keys.tools.forEach(el => {
-                    if (e.key === el.key && globalState.tool !== el.tool) {
-                        if (globalState.tool !== null) {
-                            pubsub.publish("board-clearCanvas2");
-                            globalState.tool.destructor();
-                        }
-
-                        globalState.toolName = el.tool;
-                        globalState.tool = components.tools.generateTool(globalState.toolName);
+                    if (e.key === el.key) {
+                        components.tools.setTool(el.tool);
                         pubsub.publish("tool-type");
                     }
                 });
@@ -100,7 +94,7 @@ const functionsToBind = {
                     globalState.tool.destructor();
                 }
 
-                components["tool"].generateTool("brush");
+                components["tools"].generateTool("brush");
                 pubsub.publish("tool-type");
 
                 document.body.classList.remove("white-board-mode");

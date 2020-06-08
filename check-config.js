@@ -13,6 +13,11 @@ module.exports = function testSchema(configData) {
                 "required": true
             },
 
+            "startHidden": {
+                "type": "boolean",
+                "required": true
+            },
+
             "size": {
                 "type": "object",
                 "required": true,

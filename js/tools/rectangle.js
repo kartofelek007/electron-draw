@@ -105,7 +105,7 @@ export class Rectangle {
             hasBorders: true,
             hasControls: true,
             selectable : false,
-            strokeUniform: true,
+            strokeUniform: false,
             color: globalState.color,
             strokeWidth : globalState.size,
             stroke : globalState.color,

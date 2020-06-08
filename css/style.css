@@ -3,7 +3,7 @@ body {
     height: 100vh;
     overflow: hidden;
     /*background: url(../images/2020-03-17_223546.png);*/
-    background: url(../images/2020-03-19_192223.png);
+    /*background: url(../images/2020-03-19_192223.png);*/
 }
 
 body.white-board-mode {
@@ -20,8 +20,6 @@ body.white-board-mode {
     left: 0;
     top: 0;
     cursor: none !important;
-}
-#second {
     pointer-events: none;
     z-index: 0;
 }

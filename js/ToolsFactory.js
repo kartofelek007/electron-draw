@@ -13,9 +13,19 @@ export default class FactoryTool {
         this.tool = null;
     }
 
-    generateTool(name) {
-        globalState.toolName = name;
+    setTool(name) {
+        if (globalState.toolName !== name) {
+            if (globalState.tool !== null) {
+                pubsub.publish("board-clearCanvas2");
+                globalState.tool.destructor();
+            }
 
+            globalState.toolName = name;
+            globalState.tool = this.generateTool(name);
+        }
+    }
+
+    generateTool(name) {
         switch (name) {
             case 'selection':
                 return new Selection();

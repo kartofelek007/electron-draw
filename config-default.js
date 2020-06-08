@@ -14,6 +14,8 @@ module.exports = {
 
     "guiTheme" : "light", //"dark", "light"
 
+    startHidden : true,
+
     "keys" : {
         "hideGui" : "`",
         "clearScreen": "c",

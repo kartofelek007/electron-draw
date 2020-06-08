@@ -1,6 +1,7 @@
 import globalState from "./global-state.js";
 import storage from "./utils/localStorage.js";
 import pubsub from "./pubsub.js";
+import components from "./componets.js";
 
 export default class Gui {
     constructor() {
@@ -166,7 +167,7 @@ export default class Gui {
                     globalState.tool.destructor();
                 }
 
-                components.tool.generateTool(li.dataset.tool);
+                components.tools.setTool(li.dataset.tool);
                 pubsub.publish("tool-type");
             });
 
