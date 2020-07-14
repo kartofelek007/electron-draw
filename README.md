@@ -1,7 +1,9 @@
 # Presentation drawing app
 App for drawing over desktop made in Electron
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/3Hy6OED8XXE" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+Video from the presentation:
+
+https://www.youtube.com/watch?v=3Hy6OED8XXE
 
 ### Installation
 Install all dependency by **npm install**. Then run **npm start**.
