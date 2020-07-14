@@ -1,10 +1,11 @@
 # Presentation drawing app
 App for drawing over desktop made in Electron
 
+<iframe width="560" height="315" src="https://www.youtube.com/embed/3Hy6OED8XXE" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 ### Installation
 Install all dependency by **npm install**. Then run **npm start**.
-In task bar (window) blue icon will show up. 
+In task bar (window) blue icon will show up.
 Then you may hit F7 to start draw on screen.
 
 ### Build exe
