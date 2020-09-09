@@ -100,7 +100,8 @@ if (configTest.errors.length) {
                 icon: path.join(__dirname, 'images/icon.png'),
                 kiosk: true,
                 webPreferences: {
-                    nodeIntegration: true
+                    nodeIntegration: true,
+                    enableRemoteModule: true
                 }
             });
 
