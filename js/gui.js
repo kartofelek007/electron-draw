@@ -85,8 +85,8 @@ export default class Gui {
 
             //jezeli gui wyszlo poza ekran cofam do domyslnych ustawien
             if (
-                pos.posX > window.screen.width - this.elementGui.offsetWidth ||
-                pos.posY > window.screen.height - this.elementGui.offsetHeight ||
+                pos.posX > window.screen.width - this.elementGui.width ||
+                pos.posY > window.screen.height - this.elementGui.width ||
                 pos.posX < 0 ||
                 pos.posY < 0
             ) {
@@ -96,9 +96,21 @@ export default class Gui {
 
             this.elementGui.style.left = pos.posX + "px";
             this.elementGui.style.top  = pos.posY + "px";
+
+            setTimeout(_ => {
+                const guiPos = this.elementGui.getBoundingClientRect();
+                const menuPos = this.elementColorList.getBoundingClientRect();
+                
+                if (guiPos.x + guiPos.width + menuPos.width + 10 > window.innerWidth) {
+                    this.elementColorList.classList.add("gui-menu--left");
+                } else {
+                    this.elementColorList.classList.remove("gui-menu--left");
+                }
+            }, 0)
         }
 
         const guiMove = this.elementGui.querySelector('.gui-move');
+
         guiMove.addEventListener("mousedown", (e) => {
             move.isMove = true;
             move.offsetX = e.offsetX;
@@ -122,6 +134,17 @@ export default class Gui {
 
                 this.elementGui.style.left = x + "px";
                 this.elementGui.style.top = y + "px";
+
+                const guiPos = this.elementGui.getBoundingClientRect();
+                const menuPos = this.elementColorList.getBoundingClientRect();
+
+                if (guiPos.x + guiPos.width + menuPos.width + 10 > window.innerWidth) {
+                    this.elementColorList.classList.add("gui-menu--left");
+                } else {
+                    this.elementColorList.classList.remove("gui-menu--left");
+                }
+
+                //this.elementColorList.classList.
             }
         });
 

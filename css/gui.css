@@ -99,6 +99,10 @@
     transform: translateY(-50%);
     box-shadow: var(--box-shadow);
 }
+.gui-menu--left {
+    left: auto;
+    right: 45px;
+}
 .gui-menu::before {
     content:"";
     width: 30px;
