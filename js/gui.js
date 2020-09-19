@@ -100,7 +100,7 @@ export default class Gui {
             setTimeout(_ => {
                 const guiPos = this.elementGui.getBoundingClientRect();
                 const menuPos = this.elementColorList.getBoundingClientRect();
-                
+
                 if (guiPos.x + guiPos.width + menuPos.width + 10 > window.innerWidth) {
                     this.elementColorList.classList.add("gui-menu--left");
                 } else {

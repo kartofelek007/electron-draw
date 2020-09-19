@@ -5,6 +5,7 @@
     "main": "main.js",
     "scripts": {
         "start": "electron .",
+        "develop": "electron . debug",
         "build": "electron-builder"
     },
     "keywords": [
