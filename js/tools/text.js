@@ -9,6 +9,8 @@ export class Text {
         components.board.disableSelection();
 
         this.mouseDown = this.mouseDown.bind(this);
+        this.pressEscape = this.pressEscape.bind(this);
+
         this.bindEvents();
         this._text = null;
 
@@ -26,16 +28,49 @@ export class Text {
 
         pubsub.unsubscribe("tool-color", this.idSubscribe);
         pubsub.unsubscribe("tool-size", this.idSubscribe);
-        pubsub.unsubscribe("tool-tool", this.idSubscribe);    }
+        pubsub.unsubscribe("tool-tool", this.idSubscribe);
+    }
 
     bindEvents() {
         components.board.canvas.on("mouse:down", this.mouseDown);
         document.addEventListener("mousemove", this.drawHelper);
+        document.addEventListener("keyup", this.pressEscape);
     }
 
     unbindEvents() {
         components.board.canvas.off("mouse:down", this.mouseDown);
         document.removeEventListener("mousemove", this.drawHelper);
+        document.removeEventListener("keyup", this.pressEscape);
+    }
+
+    pressEscape(e) {
+        if (e.key.toUpperCase() === "ESCAPE" && globalState.toolName !== "selection") {
+            components.board.disableSelection();
+
+            console.log('exit');
+
+            if (this._text) {
+                const reg = /^\s$/g;
+                if (reg.test(this._text.text)) {
+                    components.board.canvas.remove(this._text);
+                }
+            }
+
+            setTimeout(() => {
+                globalState.canChangeSize = true;
+                globalState.canChangeColor = true;
+                globalState.canChangeTool = true;
+
+                console.log({
+                    canChangeSize : globalState.canChangeSize,
+                    canChangeColor : globalState.canChangeColor,
+                    canChangeTool : globalState.canChangeTool,
+                })
+
+                this._text = null;
+
+            }, 0);
+        }
     }
 
     drawHelper(e) {
@@ -79,34 +114,28 @@ export class Text {
 
 
         this._text.on("editing:entered", o => {
+            console.log('enter');
             globalState.canChangeSize = false;
             globalState.canChangeColor = false;
             globalState.canChangeTool = false;
+            console.log({
+                canChangeSize: globalState.canChangeSize,
+                canChangeColor: globalState.canChangeColor,
+                canChangeTool: globalState.canChangeTool,
+            });
+        });
+
+        this._text.on("editing:exited", o => {
+            if (globalState.toolName === "selection") {
+                console.log('exit');
+                globalState.canChangeSize  = true;
+                globalState.canChangeColor  = true;
+                globalState.canChangeTool  = true;
+            }
         });
 
         this._text.enterEditing();
         this._text.selectAll();
-
-        this._text.on("editing:exited", o => {
-            if (globalState.toolName !== "selection") {
-                components.board.disableSelection();
-            }
-
-            if (this._text) {
-                const reg = /^\s$/g;
-                if (reg.test(this._text.text)) {
-                    components.board.canvas.remove(this._text);
-                }
-            }
-
-            setTimeout(() => {
-                globalState.canChangeSize = true;
-                globalState.canChangeColor = true;
-                globalState.canChangeTool = true;
-
-                this._text = null;
-            }, 300)
-        });
 
         //this._text.setSelectionStart(0);
         //this._text.setSelectionEnd(0);
