@@ -47,8 +47,6 @@ export class Text {
         if (e.key.toUpperCase() === "ESCAPE" && globalState.toolName !== "selection") {
             components.board.disableSelection();
 
-            console.log('exit');
-
             if (this._text) {
                 const reg = /^\s$/g;
                 if (reg.test(this._text.text)) {
@@ -60,12 +58,6 @@ export class Text {
                 globalState.canChangeSize = true;
                 globalState.canChangeColor = true;
                 globalState.canChangeTool = true;
-
-                console.log({
-                    canChangeSize : globalState.canChangeSize,
-                    canChangeColor : globalState.canChangeColor,
-                    canChangeTool : globalState.canChangeTool,
-                })
 
                 this._text = null;
 
@@ -111,23 +103,15 @@ export class Text {
         components.board.canvas.add(this._text);
         components.board.canvas.setActiveObject(this._text);
 
-
-
         this._text.on("editing:entered", o => {
             console.log('enter');
             globalState.canChangeSize = false;
             globalState.canChangeColor = false;
             globalState.canChangeTool = false;
-            console.log({
-                canChangeSize: globalState.canChangeSize,
-                canChangeColor: globalState.canChangeColor,
-                canChangeTool: globalState.canChangeTool,
-            });
         });
 
         this._text.on("editing:exited", o => {
             if (globalState.toolName === "selection") {
-                console.log('exit');
                 globalState.canChangeSize  = true;
                 globalState.canChangeColor  = true;
                 globalState.canChangeTool  = true;
@@ -136,12 +120,6 @@ export class Text {
 
         this._text.enterEditing();
         this._text.selectAll();
-
-        //this._text.setSelectionStart(0);
-        //this._text.setSelectionEnd(0);
-
-
-
     }
 
 
