@@ -128,16 +128,16 @@ export class Arrow {
 fabric.LineArrow = fabric.util.createClass(fabric.Line, {
     type: 'lineArrow',
 
-    initialize: function(element, options) {
+    initialize(element, options) {
         options || (options = {});
         this.callSuper('initialize', element, options);
     },
 
-    toObject: function() {
+    toObject() {
         return fabric.util.object.extend(this.callSuper('toObject'));
     },
 
-    _render: function(ctx) {
+    _render(ctx) {
         this.ctx = ctx;
         this.callSuper('_render', ctx);
         const p = this.calcLinePoints();
@@ -152,7 +152,7 @@ fabric.LineArrow = fabric.util.createClass(fabric.Line, {
         this._drawArrow(angle, p.x1, p.y1, this.heads[1]);
     },
 
-    _drawArrow: function(angle, xPos, yPos, head) {
+    _drawArrow(angle, xPos, yPos, head) {
         this.ctx.save();
 
         if (head) {

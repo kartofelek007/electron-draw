@@ -35,7 +35,7 @@ if (configTest.errors.length) {
         app.quit();
     });
 } else {
-    const debug = process.argv.includes("debug");
+    const debug = true; //process.argv.includes("debug");
 
     let tray = ""; //musi byc globalne?
 
@@ -101,7 +101,8 @@ if (configTest.errors.length) {
                 kiosk: true,
                 webPreferences: {
                     nodeIntegration: true,
-                    enableRemoteModule: true
+                    enableRemoteModule: true,
+                    contextIsolation: false,
                 }
             });
 

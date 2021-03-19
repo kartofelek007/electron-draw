@@ -1,8 +1,8 @@
-import Board from "./Board.js";
-import Controls from "./Control.js";
+import Board from "./board.js";
+import Controls from "./control.js";
 import globalState from "./global-state.js";
-import ToolsFactory from "./ToolsFactory.js";
-import Gui from "./Gui.js";
+import ToolsFactory from "./tools-factory.js";
+import Gui from "./gui.js";
 import pubsub from "./pubsub.js";
 import components from "./componets.js";
 const { dialog } = require('electron').remote;
