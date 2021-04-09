@@ -8,26 +8,21 @@ import components from "./componets.js";
 const { dialog } = require('electron').remote;
 
 //config --------------
-const fs = require('fs');
-const defaultConfig = require("./config-default.js");
-let config = {...defaultConfig};
-
 const { app } = require("electron").remote;
 const fileUrl = app.getPath("appData") + "/" + "presentation-draw-settings.json";
+const fs = require('fs');
 
-try {
-    const rawData = fs.readFileSync(fileUrl, err => {});
-    config = JSON.parse(rawData);
-} catch(err) {
-}
+const rawData = fs.readFileSync(fileUrl, err => {});
+const config = JSON.parse(rawData);
+//const config = require("./config-default.js");
 
 const configParser = require("./check-config.js");
 const configTest = configParser(config);
 
 if (configTest.errors.length) {
     const msg = `
-        Incorrect format of config file.
-        Correct below in %APPDATA%/presentation-draw-settings.json file:
+        Incorrect config file format.
+        Correct below issues in %APPDATA%/presentation-draw-settings.json file:
 
         ${configTest.errors.map(el => {
             return el.property.replace("instance.", "") + " " + el.message
@@ -41,25 +36,20 @@ if (configTest.errors.length) {
     app.quit();
 } else {
 
-    globalState.config = config;
+    globalState.setConfig(config);
     components.board = new Board("#main");
     components.controls = new Controls(config);
     components.tools = new ToolsFactory();
     components.gui = new Gui();
 
     //tool ========================
-    globalState.toolName = "brush";
-    globalState.tool = components["tools"].generateTool("brush", components["board"]);
-    pubsub.publish("tool-type");
+    globalState.setTool("brush");
 
     //colors ========================
-    globalState.color = config.keys.colors[0].color;
-    pubsub.publish("tool-color");
+    globalState.setColor(config.keys.colors[0].color);
+    pubsub.emit("tool-color");
 
     //size ========================
-    globalState.size = config.size.default;
-    pubsub.publish("tool-size");
-
-
+    globalState.setSize(config.size.default);
 }
 

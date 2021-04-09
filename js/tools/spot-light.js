@@ -4,6 +4,7 @@ import components from "../componets.js";
 
 export class SpotLight {
     constructor() {
+        this.name = "spotlight";
         this.idSubscribe = Symbol();
 
         components.board.disableSelection();
@@ -12,7 +13,7 @@ export class SpotLight {
         this._maxSize = 200;
         this._minSize = 100;
 
-        pubsub.subscribe("tool-size", this.idSubscribe, (e) => {
+        pubsub.on("tool-size", this.idSubscribe, (e) => {
             this.changeZoom(e);
         });
 
@@ -24,9 +25,9 @@ export class SpotLight {
     destructor() {
         this.unbindEvents();
 
-        pubsub.unsubscribe("tool-color", this.idSubscribe);
-        pubsub.unsubscribe("tool-size", this.idSubscribe);
-        pubsub.unsubscribe("tool-tool", this.idSubscribe);
+        pubsub.off("tool-color", this.idSubscribe);
+        pubsub.off("tool-size", this.idSubscribe);
+        pubsub.off("tool-tool", this.idSubscribe);
     }
 
     bindEvents() {

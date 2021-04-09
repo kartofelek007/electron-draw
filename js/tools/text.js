@@ -4,6 +4,7 @@ import components from "../componets.js";
 
 export class Text {
     constructor() {
+        this.name = "text";
         this.idSubscribe = Symbol();
 
         components.board.disableSelection();
@@ -14,9 +15,9 @@ export class Text {
         this.bindEvents();
         this._text = null;
 
-        pubsub.subscribe("tool-size", this.idSubscribe, () => {
+        pubsub.on("tool-size", this.idSubscribe, () => {
             if (this._text !== null) {
-                this._text.set('fontSize', globalState.sizeText + 20);
+                this._text.set('fontSize', globalState.getTextSize() + 20);
                 components.board.canvas.requestRenderAll();
             }
         });
@@ -26,9 +27,9 @@ export class Text {
         this.unbindEvents();
         this._text = null;
 
-        pubsub.unsubscribe("tool-color", this.idSubscribe);
-        pubsub.unsubscribe("tool-size", this.idSubscribe);
-        pubsub.unsubscribe("tool-tool", this.idSubscribe);
+        pubsub.off("tool-color", this.idSubscribe);
+        pubsub.off("tool-size", this.idSubscribe);
+        pubsub.off("tool-tool", this.idSubscribe);
     }
 
     bindEvents() {
@@ -44,7 +45,7 @@ export class Text {
     }
 
     pressEscape(e) {
-        if (e.key.toUpperCase() === "ESCAPE" && globalState.toolName !== "selection") {
+        if (e.key.toUpperCase() === "ESCAPE" && globalState.getTool().name !== "selection") {
             components.board.disableSelection();
 
             if (this._text) {
@@ -72,9 +73,9 @@ export class Text {
         components.board.clearCanvas2();
         components.board.ctx2.save();
         components.board.ctx2.beginPath();
-        components.board.ctx2.fillStyle = globalState.color;
+        components.board.ctx2.fillStyle = globalState.getColor();
         components.board.ctx2.globalAlpha = 1;
-        components.board.ctx2.rect(x, y - ((globalState.sizeText + 20) / 2), 5, globalState.sizeText + 20);
+        components.board.ctx2.rect(x, y - ((globalState.getTextSize() + 20) / 2), 5, globalState.getTextSize() + 20);
         components.board.ctx2.fill();
         components.board.ctx2.closePath();
         components.board.ctx2.restore();
@@ -86,10 +87,10 @@ export class Text {
         this._text = new fabric.IText('text', {
             fontFamily: 'Open Sans',
             left: pointer.x,
-            top: pointer.y - ((globalState.sizeText + 20) / 2),
-            fontSize: globalState.sizeText + 20,
+            top: pointer.y - ((globalState.getTextSize() + 20) / 2),
+            fontSize: globalState.getTextSize() + 20,
             fontWeight: 600,
-            fill: globalState.color,
+            fill: globalState.getColor(),
             fontStyle: 'normal',
             cursorDuration: 500,
             cursorWidth: 5,

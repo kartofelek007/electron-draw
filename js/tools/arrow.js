@@ -4,6 +4,8 @@ import components from "../componets.js";
 
 export class Arrow {
     constructor() {
+        this.name = "arrow";
+
         components.board.disableSelection();
 
         this.idSubscribe = Symbol();
@@ -16,16 +18,16 @@ export class Arrow {
         this.onMouseMove = this.onMouseMove.bind(this);
         this.onMouseUp = this.onMouseUp.bind(this);
 
-        pubsub.subscribe("tool-size", this.idSubscribe, () => {
+        pubsub.on("tool-size", this.idSubscribe, () => {
             if (this._line !== null) {
-                this._line.set("strokeWidth", globalState.size);
+                this._line.set("strokeWidth", globalState.getSize());
                 components.board.canvas.requestRenderAll();
             }
         });
 
-        pubsub.subscribe("tool-color", this.idSubscribe, () => {
+        pubsub.on("tool-color", this.idSubscribe, () => {
             if (this._line !== null) {
-                this._line.set("stroke", globalState.color);
+                this._line.set("stroke", globalState.getColor());
                 components.board.canvas.requestRenderAll();
             }
         });
@@ -37,9 +39,9 @@ export class Arrow {
         this.unbindEvents();
         this._line = null;
 
-        pubsub.unsubscribe("tool-color", this.idSubscribe);
-        pubsub.unsubscribe("tool-size", this.idSubscribe);
-        pubsub.unsubscribe("tool-tool", this.idSubscribe);
+        pubsub.off("tool-color", this.idSubscribe);
+        pubsub.off("tool-size", this.idSubscribe);
+        pubsub.off("tool-tool", this.idSubscribe);
     }
 
     unbindEvents() {
@@ -63,10 +65,10 @@ export class Arrow {
         components.board.clearCanvas2();
         components.board.ctx2.save();
         components.board.ctx2.lineCap = 'round';
-        components.board.ctx2.fillStyle = globalState.color;
+        components.board.ctx2.fillStyle = globalState.getColor();
         components.board.ctx2.globalAlpha = 1;
         components.board.ctx2.beginPath();
-        components.board.ctx2.arc(x, y, globalState.size / 2, 0, 2 * Math.PI);
+        components.board.ctx2.arc(x, y, globalState.getSize() / 2, 0, 2 * Math.PI);
         components.board.ctx2.fill();
         components.board.ctx2.closePath();
         components.board.ctx2.restore();
@@ -82,8 +84,8 @@ export class Arrow {
         const points = [pointer.x, pointer.y, pointer.x, pointer.y];
 
         this._line = new fabric.LineArrow(points, {
-            strokeWidth: globalState.size,
-            stroke: globalState.color,
+            strokeWidth: globalState.getSize(),
+            stroke: globalState.getColor(),
             originX: 'center',
             originY: 'center',
             fill: "transparent",

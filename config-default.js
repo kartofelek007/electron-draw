@@ -12,7 +12,7 @@ module.exports = {
 
     "askToSaveScreenShoot" : true,
 
-    "guiTheme" : "light", //"dark", "light"
+    "guiTheme" : "dark", //"dark", "light"
 
     startHidden : true,
 

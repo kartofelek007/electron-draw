@@ -15,15 +15,15 @@ export default class Gui {
 
         const guiID = Symbol();
 
-        pubsub.subscribe("gui-toggleHelpKey", guiID, () => this.toggleGuiHelpKeys());
-        pubsub.subscribe("tool-type", guiID, () => this.updateInfo());
-        pubsub.subscribe("tool-color", guiID, () => this.updateInfo());
-        pubsub.subscribe("tool-size", guiID, () => this.updateInfo());
-        pubsub.subscribe("gui-hide", guiID, () => this.toggleGui())
+        pubsub.on("gui-toggleHelpKey", guiID, () => this.toggleGuiHelpKeys());
+        pubsub.on("tool-type", guiID, () => this.updateInfo());
+        pubsub.on("tool-color", guiID, () => this.updateInfo());
+        pubsub.on("tool-size", guiID, () => this.updateInfo());
+        pubsub.on("gui-hide", guiID, () => this.toggleGui())
     }
 
     init() {
-        if (!globalState.config.interactiveGui) {
+        if (!globalState.getConfig().interactiveGui) {
             this.elementGui.classList.add("gui-non-interactive");
         }
 
@@ -31,7 +31,7 @@ export default class Gui {
             this.elementGui.classList.add("gui-hidden");
         }
 
-        if (globalState.config.guiTheme === "light") {
+        if (globalState.getConfig().guiTheme === "light") {
             this.elementGui.classList.add("gui--white");
         }
 
@@ -97,7 +97,7 @@ export default class Gui {
             this.elementGui.style.left = pos.posX + "px";
             this.elementGui.style.top  = pos.posY + "px";
 
-            setTimeout(_ => {
+            setTimeout(() => {
                 const guiPos = this.elementGui.getBoundingClientRect();
                 const menuPos = this.elementColorList.getBoundingClientRect();
 
@@ -176,7 +176,7 @@ export default class Gui {
         const ul = document.createElement("ul");
         ul.classList.add("gui-tools");
 
-        for (const el of globalState.config.keys.tools) {
+        for (const el of globalState.getConfig().keys.tools) {
             const li = document.createElement("li");
             li.dataset.tool = el.tool;
 
@@ -186,12 +186,12 @@ export default class Gui {
             li.append(svgCnt);
             li.addEventListener("click", e => {
                 if (globalState.tool !== null) {
-                    pubsub.publish("board-clearCanvas2");
+                    pubsub.emit("board-clearCanvas2");
                     globalState.tool.destructor();
                 }
 
                 components.tools.setTool(li.dataset.tool);
-                pubsub.publish("tool-type");
+                pubsub.emit("tool-type");
             });
 
             const key = document.createElement("span");
@@ -212,7 +212,7 @@ export default class Gui {
     markCurrentTool() {
         const li = this.elementTools.querySelectorAll("li");
         li.forEach(el => {
-            if (el.dataset.tool === globalState.toolName) {
+            if (el.dataset.tool === globalState.getTool().name) {
                 el.classList.add("active");
             } else {
                 el.classList.remove("active");
@@ -229,7 +229,7 @@ export default class Gui {
         const ul = document.createElement("ul");
         ul.classList.add("gui-colors-list");
 
-        for (const el of globalState.config.keys.colors) {
+        for (const el of globalState.getConfig().keys.colors) {
             const li = document.createElement("li");
             li.classList.add("color");
             li.dataset.color = el.color;
@@ -239,8 +239,8 @@ export default class Gui {
                 const li = this.parentElement.children;
                 [...li].forEach(el => el.classList.remove("active"));
                 this.classList.add("active");
-                globalState.color = this.dataset.color;
-                pubsub.publish("tool-color");
+                globalState.setColor(this.dataset.color);
+                pubsub.emit("tool-color");
             });
         }
 
@@ -250,13 +250,13 @@ export default class Gui {
     markCurrentColor() {
         const li = this.elementColorList.querySelectorAll("li");
         li.forEach(el => {
-            if (el.dataset.color === globalState.color) {
+            if (el.dataset.color === globalState.getColor()) {
                 el.classList.add("active");
             } else {
                 el.classList.remove("active");
             }
         });
-        this.elementColorCurrent.style.background = globalState.color;
+        this.elementColorCurrent.style.background = globalState.getColor();
     }
 
     toggleGui() {

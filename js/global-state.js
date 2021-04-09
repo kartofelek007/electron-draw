@@ -1,48 +1,149 @@
-export default {
+import pubsub from "./pubsub.js";
+import FactoryTool from "./tools-factory.js";
+import componets from "./componets.js";
+
+const state = {
     color: "red",
     size: 10,
-    sizeText : 10,
-    toolName : null,
-    tool : null,
-    canChangeColor : true,
-    canChangeSize : true,
-    canChangeTool : true,
+    sizeText: 10,
+    tool: null,
+    canChangeColor: true,
+    canChangeSize: true,
+    canChangeTool: true,
 
     mouse: {
         x: 0,
         y: 0,
-        startX : 0,
-        startY : 0,
-        mouseDown : false
+        startX: 0,
+        startY: 0,
+        mouseDown: false
     },
 
-    decreaseWidth() {
-        if (this.toolName === "text") {
-            this.sizeText -= this.config.size.step;
-            if (this.sizeText < this.config.size.min) {
-                this.sizeText = this.config.size.min;
+    config: {}
+}
+
+export default {
+    decreaseSize() {
+        if (this.getTool().name === "text") {
+            this.setTextSize(this.getTextSize() - this.getConfig().size.step);
+            if (this.getTextSize() < this.getConfig().size.min) {
+                this.setTextSize(this.getConfig().size.min);
             }
         } else {
-            this.size -= this.config.size.step;
-            if (this.size < this.config.size.min) {
-                this.size = this.config.size.min;
+            this.setSize(this.getSize() - this.getConfig().size.step);
+            if (this.getSize() < this.getConfig().size.min) {
+                this.setSize(this.getConfig().size.min);
             }
+        }
+        pubsub.emit("tool-size", this.getSize())
+    },
+
+    increaseSize() {
+        if (this.getTool().name === "text") {
+            this.setTextSize(this.getTextSize() + this.getConfig().size.step);
+            if (this.getTextSize() > this.getConfig().size.max) {
+                this.setTextSize(this.getConfig().size.max);
+            }
+        } else {
+            this.setSize(this.getSize() + this.getConfig().size.step);
+            if (this.getSize() > this.getConfig().size.max) {
+                this.setSize(this.getConfig().size.max);
+            }
+        }
+        console.log(this.getSize());
+        pubsub.emit("tool-size", this.getSize())
+    },
+
+    getSize() {
+        return state.size;
+    },
+
+    setSize(newSize) {
+        state.size = newSize;
+        pubsub.emit("tool-size", this.getSize())
+    },
+
+    getTextSize() {
+        return state.sizeText;
+    },
+
+    setTextSize(newSize) {
+        state.sizeText = newSize;
+    },
+
+    setConfig(newConfig) {
+        state.config = newConfig;
+    },
+
+    getConfig() {
+        return state.config;
+    },
+
+    setColor(newColor) {
+        if (state.config.keys.colors.find(el => el.color === newColor)) {
+            state.color = newColor;
+            console.log("update");
+            componets.board.updateCanvas2();
+            pubsub.emit("tool-color");
         }
     },
 
-    increaseWidth() {
-        if (this.toolName === "text") {
-            this.sizeText += this.config.size.step;
-                if (this.sizeText > this.config.size.max) {
-                this.sizeText = this.config.size.max;
+    getColor() {
+        return state.color;
+    },
+
+    setTool(name) {
+        if (state.toolName !== name) {
+            if (state.tool !== null) {
+                pubsub.emit("board-clearCanvas2");
+                state.tool.destructor();
             }
-        } else {
-            this.size += this.config.size.step;
-            if (this.size > this.config.size.max) {
-                this.size = this.config.size.max;
-            }
+
+            state.tool = componets.tools.generateTool(name);
+            pubsub.emit("tool-type");
         }
     },
 
-    config : {}
+    getTool() {
+        return state.tool;
+    },
+
+    setMouse({x, y, startX, startY, mouseDown}) {
+        const obj = {};
+        if (x) obj.x = x;
+        if (y) obj.y = y;
+        if (startX) obj.startX = startX;
+        if (startY) obj.startY = startY;
+        if (mouseDown) obj.mouseDown = mouseDown;
+
+        Object.assign(state.mouse, obj)
+    },
+
+    getMouse() {
+        return state.mouse;
+    },
+
+    set canChangeColor(bool) {
+        state.canChangeColor = bool;
+    },
+
+    get canChangeColor() {
+        return state.canChangeColor;
+    },
+
+    set canChangeSize(bool) {
+        state.canChangeSize = bool;
+    },
+
+    get canChangeSize() {
+        return state.canChangeSize;
+    },
+
+    set canChangeTool(bool) {
+        state.canChangeTool = bool;
+    },
+
+    get canChangeTool() {
+        return state.canChangeTool;
+    }
 }

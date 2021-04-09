@@ -95,7 +95,7 @@ if (configTest.errors.length) {
                 transparent: true,
                 frame: false,
                 alwaysOnTop: true,
-                fullscreen: true,
+                // fullscreen: true,
                 resizable: false,
                 icon: path.join(__dirname, 'images/icon.png'),
                 kiosk: true,
@@ -107,7 +107,7 @@ if (configTest.errors.length) {
             });
 
             this.mainWindow.loadFile('index.html');
-
+            this.mainWindow.setFullScreen(true);
 
             if (config.startHidden) {
                 this.mainWindow.hide();

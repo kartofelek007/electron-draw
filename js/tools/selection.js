@@ -5,6 +5,8 @@ import components from "../componets.js";
 
 export class Selection {
     constructor() {
+        this.name = "selection";
+
         this.idSubscribe = Symbol();
         this.onKeyUp = this.onKeyUp.bind(this);
         this.onKeyDown = this.onKeyDown.bind(this);
@@ -31,29 +33,29 @@ export class Selection {
             });
         };
 
-        pubsub.subscribe("tool-color", this.idSubscribe, () => {
+        pubsub.on("tool-color", this.idSubscribe, () => {
             if (components.board.canvas.getActiveObject()) {
                 loopThroughElements(components.board.canvas.getActiveObjects(), {
                     "i-text" : function(el) {
-                        el.set("fill", globalState.color);
+                        el.set("fill", globalState.getColor());
                     },
                     "rect" : function(el) {
                         if (el.fill !== "transparent") {
-                            if (hexToRGBA(globalState.color, 0.7)) {
-                                el.set("fill", hexToRGBA(globalState.color, 0.7));
+                            if (hexToRGBA(globalState.getColor(), 0.7)) {
+                                el.set("fill", hexToRGBA(globalState.getColor(), 0.7));
                             }
                         }
-                        el.set("stroke", globalState.color);
+                        el.set("stroke", globalState.getColor());
                     },
                     [otherTypeKey] : function(el) {
-                        el.set("stroke", globalState.color);
+                        el.set("stroke", globalState.getColor());
                     }
                 });
                 components.board.canvas.renderAll();
             }
         });
 
-        pubsub.subscribe("tool-size", this.idSubscribe, (e) => {
+        pubsub.on("tool-size", this.idSubscribe, (e) => {
             if (components.board.canvas.getActiveObject()) {
                 components.board.canvas.getActiveObjects().forEach(el => {
                     const type = el.get("type");
@@ -91,9 +93,9 @@ export class Selection {
 
         this.unbindEvents();
 
-        pubsub.unsubscribe("tool-color", this.idSubscribe);
-        pubsub.unsubscribe("tool-size", this.idSubscribe);
-        pubsub.unsubscribe("tool-tool", this.idSubscribe);
+        pubsub.off("tool-color", this.idSubscribe);
+        pubsub.off("tool-size", this.idSubscribe);
+        pubsub.off("tool-tool", this.idSubscribe);
     }
 
     bindEvents() {

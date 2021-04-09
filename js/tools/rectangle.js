@@ -5,6 +5,8 @@ import components from "../componets.js";
 
 export class Rectangle {
     constructor() {
+        this.name = "rectangle";
+
         this.idSubscribe = Symbol();
 
         components.board.disableSelection();
@@ -21,16 +23,16 @@ export class Rectangle {
         this.onKeyDown = this.onKeyDown.bind(this);
         this.onKeyUp = this.onKeyUp.bind(this);
 
-        pubsub.subscribe("tool-size", this.idSubscribe, () => {
+        pubsub.on("tool-size", this.idSubscribe, () => {
             if (this._rect !== null) {
-                this._rect.set("strokeWidth", globalState.size);
+                this._rect.set("strokeWidth", globalState.getSize());
                 components.board.canvas.requestRenderAll();
             }
         });
 
-        pubsub.subscribe("tool-color", this.idSubscribe, () => {
+        pubsub.on("tool-color", this.idSubscribe, () => {
             if (this._rect !== null) {
-                this._rect.set("stroke", globalState.color);
+                this._rect.set("stroke", globalState.getColor());
                 components.board.canvas.requestRenderAll();
             }
         });
@@ -42,9 +44,9 @@ export class Rectangle {
         this.unbindEvents();
         this._rect = null;
 
-        pubsub.unsubscribe("tool-color", this.idSubscribe);
-        pubsub.unsubscribe("tool-size", this.idSubscribe);
-        pubsub.unsubscribe("tool-tool", this.idSubscribe);
+        pubsub.off("tool-color", this.idSubscribe);
+        pubsub.off("tool-size", this.idSubscribe);
+        pubsub.off("tool-tool", this.idSubscribe);
     }
 
     bindEvents() {
@@ -66,16 +68,16 @@ export class Rectangle {
     }
 
     drawHelper(e) {
-        const x = e.pageX - globalState.size / 2;
-        const y = e.pageY - globalState.size / 2;
+        const x = e.pageX - globalState.getSize() / 2;
+        const y = e.pageY - globalState.getSize() / 2;
 
         components.board.clearCanvas2();
         components.board.ctx2.save();
         components.board.ctx2.beginPath();
-        components.board.ctx2.fillStyle = globalState.color;
+        components.board.ctx2.fillStyle = globalState.getColor();
         components.board.ctx2.globalAlpha = 1;
         components.board.ctx2.lineCap = 'square';
-        components.board.ctx2.fillRect(x, y, globalState.size, globalState.size);
+        components.board.ctx2.fillRect(x, y, globalState.getSize(), globalState.getSize());
         components.board.ctx2.closePath();
         components.board.ctx2.restore();
     }
@@ -84,12 +86,12 @@ export class Rectangle {
         this._draw = true;
         const pointer = components.board.canvas.getPointer(o.e);
 
-        this._startX = Math.floor(pointer.x - globalState.size / 2);
-        this._startY = Math.floor(pointer.y - globalState.size / 2);
+        this._startX = Math.floor(pointer.x - globalState.getSize() / 2);
+        this._startY = Math.floor(pointer.y - globalState.getSize() / 2);
 
         let fillColor = "transparent";
-        if (hexToRGBA(globalState.color, 0.7)) {
-            fillColor = hexToRGBA(globalState.color, 0.7);
+        if (hexToRGBA(globalState.getColor(), 0.7)) {
+            fillColor = hexToRGBA(globalState.getColor(), 0.7);
         }
 
         this._rect = new fabric.Rect({
@@ -106,9 +108,9 @@ export class Rectangle {
             hasControls: true,
             selectable : false,
             strokeUniform: false,
-            color: globalState.color,
-            strokeWidth : globalState.size,
-            stroke : globalState.color,
+            color: globalState.getColor(),
+            strokeWidth : globalState.getSize(),
+            stroke : globalState.getColor(),
             fill : this._modifier ? fillColor : "transparent"
         });
 
@@ -127,17 +129,17 @@ export class Rectangle {
             if (y < 0) y = 0;
             if (y > screen.height) y = screen.height;
 
-            const minX = Math.floor(Math.min(x - globalState.size / 2, this._startX));
-            const minY = Math.floor(Math.min(y - globalState.size / 2, this._startY));
+            const minX = Math.floor(Math.min(x - globalState.getSize() / 2, this._startX));
+            const minY = Math.floor(Math.min(y - globalState.getSize() / 2, this._startY));
             const maxX = Math.floor(Math.max(x, this._startX));
             const maxY = Math.floor(Math.max(y, this._startY));
             
             this._rect.set({left: minX});
             this._rect.set({top:  minY});
 
-            let width = Math.floor(maxX - minX - globalState.size / 2);
+            let width = Math.floor(maxX - minX - globalState.getSize() / 2);
             if (width === 0) width = 1;
-            let height = Math.floor(maxY - minY - globalState.size / 2);
+            let height = Math.floor(maxY - minY - globalState.getSize() / 2);
             if (height === 0) height = 1;
 
             this._rect.set({width: width });
@@ -150,8 +152,8 @@ export class Rectangle {
     onMouseUp(o) {
         this._draw = false;
         const pointer = components.board.canvas.getPointer(o.e);
-        let x = pointer.x - globalState.size / 2;
-        let y = pointer.y - globalState.size / 2;
+        let x = pointer.x - globalState.getSize() / 2;
+        let y = pointer.y - globalState.getSize() / 2;
 
         if (Math.abs(this._startX - x) < 5 || Math.abs(this._startY - y) < 5) {
             components.board.canvas.remove(this._rect);

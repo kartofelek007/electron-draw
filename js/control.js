@@ -1,6 +1,5 @@
 import pubsub from "./pubsub.js";
 import globalState from "./global-state.js";
-import storage from "./utils/localStorage.js";
 import { savePrintScreen } from "./utils/savePrintScreen.js";
 const { ipcRenderer } = require('electron');
 import components from "./componets.js";
@@ -11,32 +10,34 @@ function metaKeysPress(e) {
 
 const functionsToBind = {
     mousemove(e) {
-        globalState.mouse.x = e.pageX;
-        globalState.mouse.y = e.pageY;
+        globalState.setMouse({ x : e.pageX });
+        globalState.setMouse({ y : e.pageY });
     },
 
     keyUpClearScreen(e) {
         if (globalState.canChangeTool && globalState.canChangeColor) {
-            if (e.key.toLowerCase() === globalState.config.keys.clearScreen && !metaKeysPress(e)) {
-                pubsub.publish("board-clearCanvas1");
+            if (e.key.toLowerCase() === globalState.getConfig().keys.clearScreen && !metaKeysPress(e)) {
+                pubsub.emit("board-clearCanvas1");
             }
         }
     },
 
     keyUpGuiHelp(e) {
         if (e.key === "?" && metaKeysPress(e) && globalState.canChangeColor && globalState.canChangeSize && globalState.canChangeTool) {
-            pubsub.publish("gui-toggleHelpKey");
+            pubsub.emit("gui-toggleHelpKey");
         }
     },
 
     keyUpTool(e) {
-        const keys = globalState.config.keys.tools.map(el => el.key);
+        const keys = globalState.getConfig().keys.tools.map(el => el.key);
+
         if (globalState.canChangeTool) {
             if (keys.includes(e.key)) {
-                globalState.config.keys.tools.forEach(el => {
+                console.log(globalState.getConfig());
+                globalState.getConfig().keys.tools.forEach(el => {
                     if (e.key === el.key) {
-                        components.tools.setTool(el.tool);
-                        pubsub.publish("tool-type");
+                        console.log(e.key);
+                        globalState.setTool(el.tool);
                     }
                 });
             }
@@ -44,33 +45,30 @@ const functionsToBind = {
     },
 
     keyUpColor(e) {
-        const keys = globalState.config.keys.colors.map(el => el.key);
+        const keys = globalState.getConfig().keys.colors.map(el => el.key);
         if (globalState.canChangeColor) {
             if (keys.includes(e.key)) {
-                globalState.config.keys.colors.forEach(el => {
+                globalState.getConfig().keys.colors.forEach(el => {
                     if (e.key === el.key && !metaKeysPress(e)) {
-                        globalState.color = el.color;
-                        pubsub.publish("tool-color");
+                        globalState.setColor(el.color);
                     }
                 });
-
             }
         }
     },
 
     wheelSize(e) {
         if (globalState.canChangeSize) {
-            if (!["spot"].includes(globalState.toolName)) {
-                if (e.deltaY > 0) globalState.decreaseWidth();
-                if (e.deltaY < 0) globalState.increaseWidth();
+            if (!["spot"].includes(globalState.getTool().name)) {
+                if (e.deltaY > 0) globalState.decreaseSize();
+                if (e.deltaY < 0) globalState.increaseSize();
             }
-            pubsub.publish("tool-size", e);
         }
     },
 
     whiteBoard(e) {
         if (globalState.canChangeTool && globalState.canChangeColor) {
-            if (e.key === globalState.config.keys.whiteBoard && !metaKeysPress(e)) {
+            if (e.key === globalState.getConfig().keys.whiteBoard && !metaKeysPress(e)) {
                 document.body.classList.toggle("white-board-mode");
             }
         }
@@ -79,23 +77,23 @@ const functionsToBind = {
     showHideGui(e) {
         if (globalState.canChangeTool && globalState.canChangeColor && globalState.canChangeSize) {
             if (e.key === '`') {
-                pubsub.publish("gui-hide");
+                pubsub.emit("gui-hide");
             }
         }
     },
 
     escape(e) {
         if (e.key.toUpperCase() === "ESCAPE" && globalState.canChangeTool) {
-            pubsub.publish("board-clearCanvas1");
+            pubsub.emit("board-clearCanvas1");
 
             setTimeout(() => {
-                if (globalState.tool !== null) {
-                    pubsub.publish("board-clearCanvas2");
-                    globalState.tool.destructor();
+                if (globalState.getTool() !== null) {
+                    pubsub.emit("board-clearCanvas2");
+                    globalState.getTool().destructor();
                 }
 
-                components["tools"].generateTool("brush");
-                pubsub.publish("tool-type");
+                globalState.setTool("brush");
+                pubsub.emit("tool-type");
 
                 document.body.classList.remove("white-board-mode");
                 ipcRenderer.sendSync('escPressed', {});
@@ -111,7 +109,7 @@ const functionsToBind = {
     },
 
     saveScreenShoot(e) {
-        if (e.key === globalState.config.keys.saveKey) {
+        if (e.key === globalState.getConfig().keys.saveKey) {
             savePrintScreen();
         }
     },
@@ -142,7 +140,7 @@ class Control {
 
         //TODO: poprawic to
         ipcRenderer.on('clearScreenFromMain' , function(event , data) {
-            pubsub.publish("board-updateCanvas2");
+            pubsub.emit("board-updateCanvas2");
             ipcRenderer.sendSync('afterClearAndToggleWindow', {});
         });
     }

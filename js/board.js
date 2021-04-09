@@ -20,13 +20,13 @@ export default class Board {
         this.cursorHidden();
 
         const boardID = Symbol();
-        pubsub.subscribe("board-clearCanvas1", boardID, () => this.clearCanvas1());
-        pubsub.subscribe("board-clearCanvas2", boardID, () => this.clearCanvas2());
-        pubsub.subscribe("board-updateCanvas2", boardID, () => this.updateCanvas2());
+        pubsub.on("board-clearCanvas1", boardID, () => this.clearCanvas1());
+        pubsub.on("board-clearCanvas2", boardID, () => this.clearCanvas2());
+        pubsub.on("board-updateCanvas2", boardID, () => this.updateCanvas2());
 
-        pubsub.subscribe("tool-type", boardID, () => this.updateCanvas2());
-        pubsub.subscribe("tool-color", boardID, () => this.updateCanvas2());
-        pubsub.subscribe("tool-size", boardID, () => this.updateCanvas2());
+        pubsub.on("tool-type", boardID, () => this.updateCanvas2());
+        pubsub.on("tool-color", boardID, () => this.updateCanvas2());
+        pubsub.on("tool-size", boardID, () => this.updateCanvas2());
     }
 
     cursorHidden() {
@@ -57,9 +57,10 @@ export default class Board {
     }
 
     updateCanvas2() {
+        console.log(globalState.getMouse());
         document.dispatchEvent(new MouseEvent("mousemove", {
-            clientX : globalState.mouse.x,
-            clientY : globalState.mouse.y
+            clientX : globalState.getMouse().x,
+            clientY : globalState.getMouse().y
         }))
     }
 

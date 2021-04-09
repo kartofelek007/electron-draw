@@ -1,7 +1,7 @@
 export default {
     events : {},
 
-    subscribe(event, id, callback) {
+    on(event, id, callback) {
         let self = this;
 
         if (!self.events.hasOwnProperty(event)) {
@@ -11,7 +11,7 @@ export default {
         return this.events[event].set(id, callback);
     },
 
-    unsubscribe(event, id) {
+    off(event, id) {
         let self = this;
 
         if (!self.events.hasOwnProperty(event)) {
@@ -21,7 +21,7 @@ export default {
         return this.events[event].delete(id);
     },
 
-    publish(event, data = {}) {
+    emit(event, data = {}) {
         let self = this;
 
         if (!self.events.hasOwnProperty(event)) {
