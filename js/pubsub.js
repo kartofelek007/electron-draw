@@ -1,35 +1,23 @@
 export default {
-    events : {},
+    subscribers : {},
 
-    on(event, id, callback) {
-        let self = this;
-
-        if (!self.events.hasOwnProperty(event)) {
-            self.events[event] = new Map();
+    on(event, fn) {
+        if (this.subscribers[event] === undefined) {
+            this.subscribers[event] = [];
         }
 
-        return this.events[event].set(id, callback);
+        this.subscribers[event].push(fn);
     },
 
-    off(event, id) {
-        let self = this;
+    off(event, fn) {
+        if (this.subscribers[event] === undefined) return;
 
-        if (!self.events.hasOwnProperty(event)) {
-            return false;
-        }
-
-        return this.events[event].delete(id);
+        this.subscribers[event] = this.subscribers[event].filter(el => el !== fn);
     },
 
     emit(event, data = {}) {
-        let self = this;
-
-        if (!self.events.hasOwnProperty(event)) {
-            return [];
-        }
-
-        for (const [key, value] of this.events[event].entries()) {
-            value(data);
-        }
+        if (this.subscribers[event] === undefined) return;
+        console.log(this.subscribers[event]);
+        this.subscribers[event].forEach(fn => fn(data));
     }
 }

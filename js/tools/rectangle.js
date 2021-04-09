@@ -7,8 +7,6 @@ export class Rectangle {
     constructor() {
         this.name = "rectangle";
 
-        this.idSubscribe = Symbol();
-
         board.disableSelection();
 
         this._modifier = false;
@@ -23,30 +21,35 @@ export class Rectangle {
         this.onKeyDown = this.onKeyDown.bind(this);
         this.onKeyUp = this.onKeyUp.bind(this);
 
-        pubsub.on("tool-size", this.idSubscribe, () => {
-            if (this._rect !== null) {
+       this.changeToolSize = this.changeToolSize.bind(this);
+        this.changeToolColor = this.changeToolColor.bind(this);
+
+        pubsub.on("tool-size", this.changeToolSize);
+        pubsub.on("tool-color", this.changeToolColor);
+
+        this.bindEvents();
+    }
+
+    changeToolSize() {
+        if (this._rect !== null) {
                 this._rect.set("strokeWidth", globalState.getSize());
                 board.canvas.requestRenderAll();
             }
-        });
+    }
 
-        pubsub.on("tool-color", this.idSubscribe, () => {
-            if (this._rect !== null) {
+    changeToolColor() {
+        if (this._rect !== null) {
                 this._rect.set("stroke", globalState.getColor());
                 board.canvas.requestRenderAll();
             }
-        });
-
-        this.bindEvents();
     }
 
     destructor() {
         this.unbindEvents();
         this._rect = null;
 
-        pubsub.off("tool-color", this.idSubscribe);
-        pubsub.off("tool-size", this.idSubscribe);
-        pubsub.off("tool-tool", this.idSubscribe);
+        pubsub.off("tool-size", this.changeToolSize);
+        pubsub.off("tool-color", this.changeToolColor);
     }
 
     bindEvents() {

@@ -9,17 +9,20 @@ class Gui {
         this.elementTools = document.querySelector("#guiToolsPlace");
         this.elementColorList = document.querySelector("#guiColorsListPlace");
         this.elementColorCurrent = document.querySelector("#guiColorsCurrent");
+
+        this.toggleGuiHelpKeys = this.toggleGuiHelpKeys.bind(this);
+        this.updateInfo = this.updateInfo.bind(this);
+        this.updateInfo = this.updateInfo.bind(this);
+        this.updateInfo = this.updateInfo.bind(this);
+        this.toggleGui = this.toggleGui.bind(this);
     }
 
     init() {
-
-        const guiID = Symbol();
-
-        pubsub.on("gui-toggleHelpKey", guiID, () => this.toggleGuiHelpKeys());
-        pubsub.on("tool-type", guiID, () => this.updateInfo());
-        pubsub.on("tool-color", guiID, () => this.updateInfo());
-        pubsub.on("tool-size", guiID, () => this.updateInfo());
-        pubsub.on("gui-hide", guiID, () => this.toggleGui())
+        pubsub.on("gui-toggleHelpKey", this.toggleGuiHelpKeys);
+        pubsub.on("tool-type", this.updateInfo);
+        pubsub.on("tool-color", this.updateInfo);
+        pubsub.on("tool-size", this.updateInfo);
+        pubsub.on("gui-hide", this.toggleGui)
 
         if (!globalState.getConfig().interactiveGui) {
             this.elementGui.classList.add("gui-non-interactive");

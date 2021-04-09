@@ -5,7 +5,6 @@ import board from "../board.js";
 export class Text {
     constructor() {
         this.name = "text";
-        this.idSubscribe = Symbol();
 
         board.disableSelection();
 
@@ -15,21 +14,23 @@ export class Text {
         this.bindEvents();
         this._text = null;
 
-        pubsub.on("tool-size", this.idSubscribe, () => {
-            if (this._text !== null) {
-                this._text.set('fontSize', globalState.getTextSize() + 20);
-                board.canvas.requestRenderAll();
-            }
-        });
+        this.changeToolSize = this.changeToolSize.bind(this);
+
+        pubsub.on("tool-size", this.changeToolSize);
+    }
+
+    changeToolSize() {
+        if (this._text !== null) {
+            this._text.set('fontSize', globalState.getTextSize() + 20);
+            board.canvas.requestRenderAll();
+        }
     }
 
     destructor() {
         this.unbindEvents();
         this._text = null;
 
-        pubsub.off("tool-color", this.idSubscribe);
-        pubsub.off("tool-size", this.idSubscribe);
-        pubsub.off("tool-tool", this.idSubscribe);
+        pubsub.off("tool-size", this.changeToolSize);
     }
 
     bindEvents() {
@@ -113,8 +114,8 @@ export class Text {
         this._text.on("editing:exited", o => {
             if (globalState.toolName === "selection") {
                 globalState.canChangeSize = true;
-                globalState.canChangeColor  = true;
-                globalState.canChangeTool  = true;
+                globalState.canChangeColor = true;
+                globalState.canChangeTool = true;
             }
         });
 

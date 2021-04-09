@@ -19,14 +19,17 @@ class Board {
         this.createSecondCanvas();
         this.cursorHidden();
 
-        const boardID = Symbol();
-        pubsub.on("board-clearCanvas1", boardID, () => this.clearCanvas1());
-        pubsub.on("board-clearCanvas2", boardID, () => this.clearCanvas2());
-        pubsub.on("board-updateCanvas2", boardID, () => this.updateCanvas2());
+        this.clearCanvas1 = this.clearCanvas1.bind(this);
+        this.clearCanvas2 = this.clearCanvas2.bind(this);
+        this.updateCanvas2 = this.updateCanvas2.bind(this);
 
-        pubsub.on("tool-type", boardID, () => this.updateCanvas2());
-        pubsub.on("tool-color", boardID, () => this.updateCanvas2());
-        pubsub.on("tool-size", boardID, () => this.updateCanvas2());
+        pubsub.on("board-clearCanvas1", this.clearCanvas1);
+        pubsub.on("board-clearCanvas2", this.clearCanvas2);
+        pubsub.on("board-updateCanvas2", this.updateCanvas2);
+
+        pubsub.on("tool-type", this.updateCanvas2);
+        pubsub.on("tool-color", this.updateCanvas2);
+        pubsub.on("tool-size", this.updateCanvas2);
     }
 
     cursorHidden() {

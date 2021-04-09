@@ -7,7 +7,6 @@ export class Selection {
     constructor() {
         this.name = "selection";
 
-        this.idSubscribe = Symbol();
         this.onKeyUp = this.onKeyUp.bind(this);
         this.onKeyDown = this.onKeyDown.bind(this);
         this._clipboard = null;
@@ -17,6 +16,45 @@ export class Selection {
         board.enableSelection();
         board.cursorDefault();
 
+        this.changeToolSize = this.changeToolSize.bind(this);
+        this.changeToolColor = this.changeToolColor.bind(this);
+
+        pubsub.on("tool-size", this.changeToolSize);
+        pubsub.on("tool-color", this.changeToolColor);
+
+
+    }
+
+    changeToolSize() {
+        if (board.canvas.getActiveObject()) {
+            board.canvas.getActiveObjects().forEach(el => {
+                const type = el.get("type");
+                if (type === "i-text") {
+                    let size = el.get('fontSize');
+                    size += (e.deltaY > 0) ? -globalState.getConfig().size.step : globalState.getConfig().size.step;
+                    size = Math.min(size, globalState.getConfig().size.max + 10);
+                    size = Math.max(size, globalState.getConfig().size.min + 10);
+                    el.set('fontSize', size);
+                } else if (type === "group") {
+                } else {
+                    let size = el.get('strokeWidth');
+                    size += (e.deltaY > 0) ? -globalState.getConfig().size.step : globalState.getConfig().size.step;
+                    size = Math.min(size, globalState.getConfig().size.max);
+                    size = Math.max(size, globalState.getConfig().size.min);
+                    el.set("strokeWidth", size);
+                }
+            });
+
+            const selection = board.canvas.getActiveObject();
+
+            if (selection.type === 'activeSelection') {
+                selection.addWithUpdate()
+            }
+            board.canvas.requestRenderAll();
+        }
+    }
+
+    changeToolColor() {
         const otherTypeKey = Symbol();
 
         const loopThroughElements = function(elements, cb) {
@@ -33,56 +71,25 @@ export class Selection {
             });
         };
 
-        pubsub.on("tool-color", this.idSubscribe, () => {
-            if (board.canvas.getActiveObject()) {
-                loopThroughElements(board.canvas.getActiveObjects(), {
-                    "i-text": function(el) {
-                        el.set("fill", globalState.getColor());
-                    },
-                    "rect": function(el) {
-                        if (el.fill !== "transparent") {
-                            if (hexToRGBA(globalState.getColor(), 0.7)) {
-                                el.set("fill", hexToRGBA(globalState.getColor(), 0.7));
-                            }
+        if (board.canvas.getActiveObject()) {
+            loopThroughElements(board.canvas.getActiveObjects(), {
+                "i-text": function(el) {
+                    el.set("fill", globalState.getColor());
+                },
+                "rect": function(el) {
+                    if (el.fill !== "transparent") {
+                        if (hexToRGBA(globalState.getColor(), 0.7)) {
+                            el.set("fill", hexToRGBA(globalState.getColor(), 0.7));
                         }
-                        el.set("stroke", globalState.getColor());
-                    },
-                    [otherTypeKey]: function(el) {
-                        el.set("stroke", globalState.getColor());
                     }
-                });
-                board.canvas.renderAll();
-            }
-        });
-
-        pubsub.on("tool-size", this.idSubscribe, (e) => {
-            if (board.canvas.getActiveObject()) {
-                board.canvas.getActiveObjects().forEach(el => {
-                    const type = el.get("type");
-                    if (type === "i-text") {
-                        let size = el.get('fontSize');
-                        size += (e.deltaY > 0) ? -globalState.getConfig().size.step : globalState.getConfig().size.step;
-                        size = Math.min(size, globalState.getConfig().size.max + 10);
-                        size = Math.max(size, globalState.getConfig().size.min + 10);
-                        el.set('fontSize', size);
-                    } else if (type === "group") {
-                    } else {
-                        let size = el.get('strokeWidth');
-                        size += (e.deltaY > 0) ? -globalState.getConfig().size.step : globalState.getConfig().size.step;
-                        size = Math.min(size, globalState.getConfig().size.max);
-                        size = Math.max(size, globalState.getConfig().size.min);
-                        el.set("strokeWidth", size);
-                    }
-                });
-
-                const selection = board.canvas.getActiveObject();
-
-                if (selection.type === 'activeSelection') {
-                    selection.addWithUpdate()
+                    el.set("stroke", globalState.getColor());
+                },
+                [otherTypeKey]: function(el) {
+                    el.set("stroke", globalState.getColor());
                 }
-                board.canvas.requestRenderAll();
-            }
-        })
+            });
+            board.canvas.renderAll();
+        }
     }
 
     destructor() {
@@ -93,9 +100,8 @@ export class Selection {
 
         this.unbindEvents();
 
-        pubsub.off("tool-color", this.idSubscribe);
-        pubsub.off("tool-size", this.idSubscribe);
-        pubsub.off("tool-tool", this.idSubscribe);
+        pubsub.off("tool-size", this.changeToolSize);
+        pubsub.off("tool-color", this.changeToolColor);
     }
 
     bindEvents() {

@@ -61,6 +61,10 @@ const functionsToBind = {
             if (!["spot"].includes(globalState.getTool().name)) {
                 if (e.deltaY > 0) globalState.decreaseSize();
                 if (e.deltaY < 0) globalState.increaseSize();
+            } else {
+                //dla pubsub muszę nieco inaczej zwiekszac rozmiar
+                //i nie wplywac na rozmiar reszty narzedzi
+                pubsub.emit("tool-size", e);
             }
         }
     },

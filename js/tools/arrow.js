@@ -8,7 +8,6 @@ export class Arrow {
 
         board.disableSelection();
 
-        this.idSubscribe = Symbol();
         this._startX = 0;
         this._startY = 0;
         this._line = null;
@@ -17,31 +16,35 @@ export class Arrow {
         this.onMouseDown = this.onMouseDown.bind(this);
         this.onMouseMove = this.onMouseMove.bind(this);
         this.onMouseUp = this.onMouseUp.bind(this);
+        this.changeToolSize = this.changeToolSize.bind(this);
+        this.changeToolColor = this.changeToolColor.bind(this);
 
-        pubsub.on("tool-size", this.idSubscribe, () => {
-            if (this._line !== null) {
-                this._line.set("strokeWidth", globalState.getSize());
-                board.canvas.requestRenderAll();
-            }
-        });
-
-        pubsub.on("tool-color", this.idSubscribe, () => {
-            if (this._line !== null) {
-                this._line.set("stroke", globalState.getColor());
-                board.canvas.requestRenderAll();
-            }
-        });
+        pubsub.on("tool-size", this.changeToolSize);
+        pubsub.on("tool-color", this.changeToolColor);
 
         this.bindEvents();
+    }
+
+    changeToolSize() {
+        if (this._line !== null) {
+            this._line.set("strokeWidth", globalState.getSize());
+            board.canvas.requestRenderAll();
+        }
+    }
+
+    changeToolColor() {
+        if (this._line !== null) {
+            this._line.set("stroke", globalState.getColor());
+            board.canvas.requestRenderAll();
+        }
     }
 
     destructor() {
         this.unbindEvents();
         this._line = null;
 
-        pubsub.off("tool-color", this.idSubscribe);
-        pubsub.off("tool-size", this.idSubscribe);
-        pubsub.off("tool-tool", this.idSubscribe);
+        pubsub.off("tool-color", this.changeToolColor);
+        pubsub.off("tool-size", this.changeToolSize);
     }
 
     unbindEvents() {

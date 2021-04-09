@@ -7,7 +7,6 @@ export class Brush {
         this.name = "brush";
 
         this.bindEvents();
-        this.idSubscribe = Symbol();
 
         board.disableSelection();
         board.canvas.isDrawingMode = true;
@@ -15,22 +14,27 @@ export class Brush {
         board.canvas.freeDrawingBrush.color = globalState.getColor();
         board.canvas.freeDrawingBrush.width = globalState.getSize();
 
-        pubsub.on("tool-color", this.idSubscribe, () => {
-            board.canvas.freeDrawingBrush.color = globalState.getColor();
-        });
+        this.changeToolSize = this.changeToolSize.bind(this);
+        this.changeToolColor = this.changeToolColor.bind(this);
 
-        pubsub.on("tool-size", this.idSubscribe, () => {
-            board.canvas.freeDrawingBrush.width = globalState.getSize();
-        });
+        pubsub.on("tool-size", this.changeToolSize);
+        pubsub.on("tool-color", this.changeToolColor);
+    }
+
+    changeToolSize() {
+        board.canvas.freeDrawingBrush.width = globalState.getSize();
+    }
+
+    changeToolColor() {
+        board.canvas.freeDrawingBrush.color = globalState.getColor();
     }
 
     destructor() {
         this.unbindEvents();
         board.canvas.isDrawingMode = false;
 
-        pubsub.off("tool-color", this.idSubscribe);
-        pubsub.off("tool-size", this.idSubscribe);
-        pubsub.off("tool-tool", this.idSubscribe);
+        pubsub.off("tool-color", this.changeToolColor);
+        pubsub.off("tool-size", this.changeToolSize);
     }
 
     bindEvents() {

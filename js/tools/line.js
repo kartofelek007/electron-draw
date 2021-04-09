@@ -8,7 +8,6 @@ export class Line {
 
         board.disableSelection();
 
-        this.idSubscribe = Symbol();
         this._startX = 0;
         this._startY = 0;
         this._line = null;
@@ -18,30 +17,35 @@ export class Line {
         this.onMouseMove = this.onMouseMove.bind(this);
         this.onMouseUp = this.onMouseUp.bind(this);
 
-        pubsub.on("tool-size", this.idSubscribe, () => {
-            if (this._line !== null) {
-                this._line.set("strokeWidth", globalState.getSize());
-                board.canvas.requestRenderAll();
-            }
-        });
+        this.changeToolSize = this.changeToolSize.bind(this);
+        this.changeToolColor = this.changeToolColor.bind(this);
 
-        pubsub.on("tool-color", this.idSubscribe, () => {
-            if (this._line !== null) {
-                this._line.set("stroke", globalState.getColor());
-                board.canvas.requestRenderAll();
-            }
-        });
+        pubsub.on("tool-size", this.changeToolSize);
+        pubsub.on("tool-color", this.changeToolColor);
 
         this.bindEvents();
+    }
+
+    changeToolSize() {
+        if (this._line !== null) {
+            this._line.set("strokeWidth", globalState.getSize());
+            board.canvas.requestRenderAll();
+        }
+    }
+
+    changeToolColor() {
+        if (this._line !== null) {
+            this._line.set("stroke", globalState.getColor());
+            board.canvas.requestRenderAll();
+        }
     }
 
     destructor() {
         this.unbindEvents();
         this._line = null;
 
-        pubsub.off("tool-color", this.idSubscribe);
-        pubsub.off("tool-size", this.idSubscribe);
-        pubsub.off("tool-tool", this.idSubscribe);
+        pubsub.off("tool-size", this.changeToolSize);
+        pubsub.off("tool-color", this.changeToolColor);
     }
 
     bindEvents() {
@@ -108,7 +112,7 @@ export class Line {
         if (Math.abs(this._startX - x) < 10 && Math.abs(this._startY - y) < 10) {
             board.canvas.remove(this._line);
         }
-        
+
         this._draw = false;
         this._line = null;
     }

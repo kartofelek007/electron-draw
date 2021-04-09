@@ -3,8 +3,7 @@ import board from "../board.js";
 
 export class SpotLight {
     constructor() {
-        this.name = "spotlight";
-        this.idSubscribe = Symbol();
+        this.name = "spot";
 
         board.disableSelection();
 
@@ -12,21 +11,23 @@ export class SpotLight {
         this._maxSize = 200;
         this._minSize = 100;
 
-        pubsub.on("tool-size", this.idSubscribe, (e) => {
-            this.changeZoom(e);
-        });
-
         this.onMouseMove = this.onMouseMove.bind(this);
+        this.changeZoom = this.changeZoom.bind(this);
+
+        this.changeToolSize = this.changeToolSize.bind(this);
+
+        pubsub.on("tool-size", this.changeToolSize);
 
         this.bindEvents();
     }
 
+    changeToolSize() {
+        this.changeZoom(e);
+    }
+
     destructor() {
         this.unbindEvents();
-
-        pubsub.off("tool-color", this.idSubscribe);
-        pubsub.off("tool-size", this.idSubscribe);
-        pubsub.off("tool-tool", this.idSubscribe);
+        pubsub.off("tool-size", this.changeToolSize);
     }
 
     bindEvents() {
