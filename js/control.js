@@ -2,7 +2,6 @@ import pubsub from "./pubsub.js";
 import globalState from "./global-state.js";
 import { savePrintScreen } from "./utils/savePrintScreen.js";
 const { ipcRenderer } = require('electron');
-import components from "./componets.js";
 
 function metaKeysPress(e) {
     return e.ctrlKey || e.shiftKey || e.altKey || e.metaKey
@@ -172,4 +171,4 @@ class Control {
     }
 }
 
-export default Control;
+export default new Control();

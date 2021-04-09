@@ -4,7 +4,7 @@ import globalState from "./global-state.js";
 import ToolsFactory from "./tools-factory.js";
 import Gui from "./gui.js";
 import pubsub from "./pubsub.js";
-import components from "./componets.js";
+import gui from "./gui.js";
 const { dialog } = require('electron').remote;
 
 //config --------------
@@ -28,28 +28,20 @@ if (configTest.errors.length) {
             return el.property.replace("instance.", "") + " " + el.message
         }).join("\n")}
     `;
+
     dialog.showMessageBoxSync({
         type: "error",
-        title: "Incorrect config data",
+        title: "Incorrect config file data",
         message: msg
     });
+
     app.quit();
-} else {
-
-    globalState.setConfig(config);
-    components.board = new Board("#main");
-    components.controls = new Controls(config);
-    components.tools = new ToolsFactory();
-    components.gui = new Gui();
-
-    //tool ========================
-    globalState.setTool("brush");
-
-    //colors ========================
-    globalState.setColor(config.keys.colors[0].color);
-    pubsub.emit("tool-color");
-
-    //size ========================
-    globalState.setSize(config.size.default);
 }
+
+globalState.setConfig(config);
+gui.init();
+
+globalState.setTool("brush");
+globalState.setColor(globalState.getConfig().keys.colors[0].color);
+globalState.setSize(globalState.getConfig().size.default);
 

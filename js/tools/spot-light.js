@@ -1,13 +1,12 @@
-import globalState from "../global-state.js";
 import pubsub from "../pubsub.js";
-import components from "../componets.js";
+import board from "../board.js";
 
 export class SpotLight {
     constructor() {
         this.name = "spotlight";
         this.idSubscribe = Symbol();
 
-        components.board.disableSelection();
+        board.disableSelection();
 
         this._size = 100;
         this._maxSize = 200;
@@ -50,15 +49,15 @@ export class SpotLight {
     }
 
     onMouseMove(e) {
-        components.board.clearCanvas2();
-        components.board.ctx2.fillStyle = "rgba(0,0,0,0.8)";
-        components.board.ctx2.fillRect(0, 0, components.board.canvas2.width, components.board.canvas2.height);
-        components.board.ctx2.save();
-        components.board.ctx2.beginPath();
-        components.board.ctx2.arc(e.pageX, e.pageY, this._size, 0, 2 * Math.PI);
-        components.board.ctx2.clip();
-        components.board.clearCanvas2();
-        components.board.ctx2.restore();
+        board.clearCanvas2();
+        board.ctx2.fillStyle = "rgba(0,0,0,0.8)";
+        board.ctx2.fillRect(0, 0, board.canvas2.width, board.canvas2.height);
+        board.ctx2.save();
+        board.ctx2.beginPath();
+        board.ctx2.arc(e.pageX, e.pageY, this._size, 0, 2 * Math.PI);
+        board.ctx2.clip();
+        board.clearCanvas2();
+        board.ctx2.restore();
     }
 
 }

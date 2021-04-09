@@ -1,17 +1,17 @@
 import globalState from "./global-state.js";
 import storage from "./utils/localStorage.js";
 import pubsub from "./pubsub.js";
-import components from "./componets.js";
 
-export default class Gui {
+class Gui {
     constructor() {
         this.elementGui = document.querySelector("#gui");
         this.generateHTML();
         this.elementTools = document.querySelector("#guiToolsPlace");
         this.elementColorList = document.querySelector("#guiColorsListPlace");
         this.elementColorCurrent = document.querySelector("#guiColorsCurrent");
+    }
 
-        this.init();
+    init() {
 
         const guiID = Symbol();
 
@@ -20,9 +20,7 @@ export default class Gui {
         pubsub.on("tool-color", guiID, () => this.updateInfo());
         pubsub.on("tool-size", guiID, () => this.updateInfo());
         pubsub.on("gui-hide", guiID, () => this.toggleGui())
-    }
 
-    init() {
         if (!globalState.getConfig().interactiveGui) {
             this.elementGui.classList.add("gui-non-interactive");
         }
@@ -185,12 +183,12 @@ export default class Gui {
             svgCnt.innerHTML = iconsSvg[el.tool];
             li.append(svgCnt);
             li.addEventListener("click", e => {
-                if (globalState.tool !== null) {
+                if (globalState.getTool() !== null) {
                     pubsub.emit("board-clearCanvas2");
-                    globalState.tool.destructor();
+                    globalState.getTool().destructor();
                 }
 
-                components.tools.setTool(li.dataset.tool);
+                globalState.setTool(li.dataset.tool);
                 pubsub.emit("tool-type");
             });
 
@@ -270,3 +268,5 @@ export default class Gui {
         }
     }
 }
+
+export default new Gui();

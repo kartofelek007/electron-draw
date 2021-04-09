@@ -1,7 +1,7 @@
 const fs = require('fs');
 const defaultConfig = require("./config-default.js");
-const { app } = require("electron");
-const { dialog } = require('electron').remote;
+const {app} = require("electron");
+const {dialog} = require('electron');
 
 const fileUrl = app.getPath("appData") + "/" + "presentation-draw-settings.json";
 let config = {...defaultConfig};

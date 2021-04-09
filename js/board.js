@@ -1,8 +1,8 @@
 import globalState from "./global-state.js";
 import pubsub from "./pubsub.js";
 
-export default class Board {
-    constructor(selector) {
+class Board {
+    constructor() {
         const el = document.querySelector("#main");
         this.canvas = new fabric.Canvas(el, {
             preserveObjectStacking: true
@@ -94,4 +94,5 @@ export default class Board {
     }
 }
 
+export default new Board();
 

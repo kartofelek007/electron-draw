@@ -5,14 +5,8 @@ import { Line } from "./tools/line.js"
 import { Arrow } from "./tools/arrow.js"
 import { Text } from "./tools/text.js"
 import { SpotLight } from "./tools/spot-light.js"
-import globalState from "./global-state.js";
-import pubsub from "./pubsub.js";
 
-export default class FactoryTool {
-    constructor() {
-        this.tool = null;
-    }
-
+class FactoryTool {
     generateTool(name) {
         switch (name) {
             case 'selection':
@@ -32,3 +26,5 @@ export default class FactoryTool {
         }
     }
 }
+
+export default new FactoryTool();

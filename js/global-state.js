@@ -1,6 +1,6 @@
 import pubsub from "./pubsub.js";
-import FactoryTool from "./tools-factory.js";
-import componets from "./componets.js";
+import factoryTool from "./tools-factory.js";
+import board from "./board.js";
 
 const state = {
     color: "red",
@@ -83,7 +83,7 @@ export default {
         if (state.config.keys.colors.find(el => el.color === newColor)) {
             state.color = newColor;
             console.log("update");
-            componets.board.updateCanvas2();
+            board.updateCanvas2();
             pubsub.emit("tool-color");
         }
     },
@@ -99,7 +99,7 @@ export default {
                 state.tool.destructor();
             }
 
-            state.tool = componets.tools.generateTool(name);
+            state.tool = factoryTool.generateTool(name);
             pubsub.emit("tool-type");
         }
     },

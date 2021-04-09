@@ -1,7 +1,7 @@
 import globalState from "../global-state.js";
 import {hexToRGBA} from "../utils/colors.js";
 import pubsub from "../pubsub.js";
-import components from "../componets.js";
+import board from "../board.js";
 
 export class Rectangle {
     constructor() {
@@ -9,7 +9,7 @@ export class Rectangle {
 
         this.idSubscribe = Symbol();
 
-        components.board.disableSelection();
+        board.disableSelection();
 
         this._modifier = false;
         this._startX = 0;
@@ -26,14 +26,14 @@ export class Rectangle {
         pubsub.on("tool-size", this.idSubscribe, () => {
             if (this._rect !== null) {
                 this._rect.set("strokeWidth", globalState.getSize());
-                components.board.canvas.requestRenderAll();
+                board.canvas.requestRenderAll();
             }
         });
 
         pubsub.on("tool-color", this.idSubscribe, () => {
             if (this._rect !== null) {
                 this._rect.set("stroke", globalState.getColor());
-                components.board.canvas.requestRenderAll();
+                board.canvas.requestRenderAll();
             }
         });
 
@@ -51,18 +51,18 @@ export class Rectangle {
 
     bindEvents() {
         document.addEventListener("mousemove", this.drawHelper);
-        components.board.canvas.on("mouse:down", this.onMouseDown);
-        components.board.canvas.on("mouse:move", this.onMouseMove);
-        components.board.canvas.on("mouse:up", this.onMouseUp);
+        board.canvas.on("mouse:down", this.onMouseDown);
+        board.canvas.on("mouse:move", this.onMouseMove);
+        board.canvas.on("mouse:up", this.onMouseUp);
         document.addEventListener("keyup", this.onKeyUp);
         document.addEventListener("keydown", this.onKeyDown);
     }
     
     unbindEvents() {
         document.removeEventListener("mousemove", this.drawHelper);
-        components.board.canvas.off("mouse:down", this.onMouseDown);
-        components.board.canvas.off("mouse:move", this.onMouseMove);
-        components.board.canvas.off("mouse:up", this.onMouseUp);
+        board.canvas.off("mouse:down", this.onMouseDown);
+        board.canvas.off("mouse:move", this.onMouseMove);
+        board.canvas.off("mouse:up", this.onMouseUp);
         document.removeEventListener("keyup", this.onKeyUp);
         document.removeEventListener("keydown", this.onKeyDown);
     }
@@ -71,20 +71,20 @@ export class Rectangle {
         const x = e.pageX - globalState.getSize() / 2;
         const y = e.pageY - globalState.getSize() / 2;
 
-        components.board.clearCanvas2();
-        components.board.ctx2.save();
-        components.board.ctx2.beginPath();
-        components.board.ctx2.fillStyle = globalState.getColor();
-        components.board.ctx2.globalAlpha = 1;
-        components.board.ctx2.lineCap = 'square';
-        components.board.ctx2.fillRect(x, y, globalState.getSize(), globalState.getSize());
-        components.board.ctx2.closePath();
-        components.board.ctx2.restore();
+        board.clearCanvas2();
+        board.ctx2.save();
+        board.ctx2.beginPath();
+        board.ctx2.fillStyle = globalState.getColor();
+        board.ctx2.globalAlpha = 1;
+        board.ctx2.lineCap = 'square';
+        board.ctx2.fillRect(x, y, globalState.getSize(), globalState.getSize());
+        board.ctx2.closePath();
+        board.ctx2.restore();
     }
 
     onMouseDown(o) {
         this._draw = true;
-        const pointer = components.board.canvas.getPointer(o.e);
+        const pointer = board.canvas.getPointer(o.e);
 
         this._startX = Math.floor(pointer.x - globalState.getSize() / 2);
         this._startY = Math.floor(pointer.y - globalState.getSize() / 2);
@@ -114,12 +114,12 @@ export class Rectangle {
             fill : this._modifier ? fillColor : "transparent"
         });
 
-        components.board.canvas.add(this._rect);
+        board.canvas.add(this._rect);
     }
 
     onMouseMove(o) {
         if (this._draw) {
-            const pointer = components.board.canvas.getPointer(o.e);
+            const pointer = board.canvas.getPointer(o.e);
 
             let x = pointer.x;
             let y = pointer.y;
@@ -145,18 +145,18 @@ export class Rectangle {
             this._rect.set({width: width });
             this._rect.set({height: height });
 
-            components.board.canvas.requestRenderAll();
+            board.canvas.requestRenderAll();
         }
     }
 
     onMouseUp(o) {
         this._draw = false;
-        const pointer = components.board.canvas.getPointer(o.e);
+        const pointer = board.canvas.getPointer(o.e);
         let x = pointer.x - globalState.getSize() / 2;
         let y = pointer.y - globalState.getSize() / 2;
 
         if (Math.abs(this._startX - x) < 5 || Math.abs(this._startY - y) < 5) {
-            components.board.canvas.remove(this._rect);
+            board.canvas.remove(this._rect);
         }
         this._rect = null;
     }
