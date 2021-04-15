@@ -2,32 +2,29 @@ import globalState from "../global-state.js";
 import {hexToRGBA} from "../utils/colors.js";
 import pubsub from "../pubsub.js";
 import board from "../board.js";
+import Tool from "./tool.js";
 
-export class Rectangle {
+export class Rectangle extends Tool {
     constructor() {
+        super();
+
         this.name = "rectangle";
-
-        board.disableSelection();
-
         this._modifier = false;
         this._startX = 0;
         this._startY = 0;
         this._rect = null;
         this._draw = false;
 
-        this.onMouseDown = this.onMouseDown.bind(this);
-        this.onMouseMove = this.onMouseMove.bind(this);
-        this.onMouseUp = this.onMouseUp.bind(this);
+        board.disableSelection();
+
         this.onKeyDown = this.onKeyDown.bind(this);
         this.onKeyUp = this.onKeyUp.bind(this);
 
-       this.changeToolSize = this.changeToolSize.bind(this);
+        this.changeToolSize = this.changeToolSize.bind(this);
         this.changeToolColor = this.changeToolColor.bind(this);
 
         pubsub.on("tool-size", this.changeToolSize);
         pubsub.on("tool-color", this.changeToolColor);
-
-        this.bindEvents();
     }
 
     changeToolSize() {
@@ -45,7 +42,8 @@ export class Rectangle {
     }
 
     destructor() {
-        this.unbindEvents();
+        super.destructor();
+
         this._rect = null;
 
         pubsub.off("tool-size", this.changeToolSize);
@@ -60,7 +58,7 @@ export class Rectangle {
         document.addEventListener("keyup", this.onKeyUp);
         document.addEventListener("keydown", this.onKeyDown);
     }
-    
+
     unbindEvents() {
         document.removeEventListener("mousemove", this.drawHelper);
         board.canvas.off("mouse:down", this.onMouseDown);
@@ -136,7 +134,7 @@ export class Rectangle {
             const minY = Math.floor(Math.min(y - globalState.getSize() / 2, this._startY));
             const maxX = Math.floor(Math.max(x, this._startX));
             const maxY = Math.floor(Math.max(y, this._startY));
-            
+
             this._rect.set({left: minX});
             this._rect.set({top:  minY});
 
@@ -169,6 +167,7 @@ export class Rectangle {
             this._modifier = false;
         }
     }
+
     onKeyDown(e) {
         if (e.ctrlKey) {
             this._modifier = true;

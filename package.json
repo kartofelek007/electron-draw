@@ -8,6 +8,9 @@
         "develop": "electron . debug",
         "build": "electron-builder"
     },
+    "browserslist": [
+        "maintained node versions"
+    ],
     "keywords": [
         "Electron",
         "Presentation",

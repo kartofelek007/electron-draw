@@ -20,7 +20,7 @@ const state = {
     },
 
     config: {}
-}
+};
 
 export default {
     decreaseSize() {
@@ -50,7 +50,6 @@ export default {
                 this.setSize(this.getConfig().size.max);
             }
         }
-        console.log(this.getSize());
         pubsub.emit("tool-size", this.getSize())
     },
 
@@ -82,7 +81,6 @@ export default {
     setColor(newColor) {
         if (state.config.keys.colors.find(el => el.color === newColor)) {
             state.color = newColor;
-            console.log("update");
             board.updateCanvas2();
             pubsub.emit("tool-color");
         }
@@ -108,15 +106,8 @@ export default {
         return state.tool;
     },
 
-    setMouse({x, y, startX, startY, mouseDown}) {
-        const obj = {};
-        if (x) obj.x = x;
-        if (y) obj.y = y;
-        if (startX) obj.startX = startX;
-        if (startY) obj.startY = startY;
-        if (mouseDown) obj.mouseDown = mouseDown;
-
-        Object.assign(state.mouse, obj)
+    get mouse() {
+        return state.mouse;
     },
 
     getMouse() {

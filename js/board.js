@@ -60,7 +60,6 @@ class Board {
     }
 
     updateCanvas2() {
-        console.log(globalState.getMouse());
         document.dispatchEvent(new MouseEvent("mousemove", {
             clientX : globalState.getMouse().x,
             clientY : globalState.getMouse().y

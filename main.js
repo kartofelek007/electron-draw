@@ -11,7 +11,6 @@ const {
     dialog
 } = require('electron');
 
-
 //test config ----------------------------
 const config = require("./config.js");
 const configParser = require("./check-config.js");
@@ -35,7 +34,7 @@ if (configTest.errors.length) {
         app.quit();
     });
 } else {
-    const debug = true; //process.argv.includes("debug");
+    const debug = process.argv.includes("debug");
 
     let tray = ""; //musi byc globalne?
 
@@ -57,13 +56,23 @@ if (configTest.errors.length) {
             return path.filePaths[0];
         },
 
+        makeFullScreen() {
+            const { screen } = require("electron");
+            const { width: screenW, height: screenH } = screen.getPrimaryDisplay().workAreaSize;
+            const { getCursorScreenPoint, getDisplayNearestPoint } = screen;
+
+            const currentScreen = getDisplayNearestPoint(getCursorScreenPoint());
+            this.mainWindow.setBounds(currentScreen.size);
+        },
+
         toggleWindow(show) {
             this.windowOpen = show;
 
             if (!show) {
                 this.mainWindow.hide();
             } else {
-                this.mainWindow.setFullScreen(true);
+                //this.mainWindow.setFullScreen(true);
+                this.makeFullScreen();
                 this.mainWindow.show();
             }
         },
@@ -88,30 +97,32 @@ if (configTest.errors.length) {
         createWindow() {
 
             //FIXME: fullScreen zostawia border po bokach na ktorych nei dziala kursor
-            const { screen } = require("electron");
-            const { width: screenW, height: screenH } = screen.getPrimaryDisplay().workAreaSize;
+
 
             this.mainWindow = new BrowserWindow({
                 transparent: true,
-                frame: false,
                 alwaysOnTop: true,
-                // fullscreen: true,
+                frame: false,
+                fullscreen: false,
                 resizable: false,
                 icon: path.join(__dirname, 'images/icon.png'),
                 kiosk: true,
                 webPreferences: {
                     nodeIntegration: true,
                     enableRemoteModule: true,
-                    contextIsolation: false,
+                    contextIsolation: false
                 }
             });
 
+
+
             this.mainWindow.loadFile('index.html');
-            this.mainWindow.setFullScreen(true);
+            //this.mainWindow.setFullScreen(true);
+            this.makeFullScreen();
 
             if (config.startHidden) {
-                this.mainWindow.hide();
-                this.windowOpen = false;
+                //this.mainWindow.hide();
+                //this.windowOpen = false;
             }
 
             if (!debug) {

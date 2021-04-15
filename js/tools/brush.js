@@ -1,12 +1,13 @@
 import globalState from "../global-state.js";
 import pubsub from "../pubsub.js";
 import board from "../board.js";
+import Tool from "./tool.js";
 
-export class Brush {
+export class Brush extends Tool {
     constructor() {
-        this.name = "brush";
+        super();
 
-        this.bindEvents();
+        this.name = "brush";
 
         board.disableSelection();
         board.canvas.isDrawingMode = true;
@@ -30,7 +31,8 @@ export class Brush {
     }
 
     destructor() {
-        this.unbindEvents();
+        super.destructor();
+
         board.canvas.isDrawingMode = false;
 
         pubsub.off("tool-color", this.changeToolColor);

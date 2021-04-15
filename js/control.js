@@ -9,8 +9,8 @@ function metaKeysPress(e) {
 
 const functionsToBind = {
     mousemove(e) {
-        globalState.setMouse({ x : e.pageX });
-        globalState.setMouse({ y : e.pageY });
+        globalState.mouse.x = e.pageX;
+        globalState.mouse.y = e.pageY;
     },
 
     keyUpClearScreen(e) {
@@ -32,10 +32,8 @@ const functionsToBind = {
 
         if (globalState.canChangeTool) {
             if (keys.includes(e.key)) {
-                console.log(globalState.getConfig());
                 globalState.getConfig().keys.tools.forEach(el => {
                     if (e.key === el.key) {
-                        console.log(e.key);
                         globalState.setTool(el.tool);
                     }
                 });

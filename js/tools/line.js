@@ -1,29 +1,25 @@
 import globalState from "../global-state.js";
 import pubsub from "../pubsub.js";
 import board from "../board.js";
+import Tool from "./tool.js";
 
-export class Line {
+export class Line extends Tool {
     constructor() {
+        super();
+
         this.name = "line";
-
-        board.disableSelection();
-
         this._startX = 0;
         this._startY = 0;
         this._line = null;
         this._draw = false;
 
-        this.onMouseDown = this.onMouseDown.bind(this);
-        this.onMouseMove = this.onMouseMove.bind(this);
-        this.onMouseUp = this.onMouseUp.bind(this);
+        board.disableSelection();
 
         this.changeToolSize = this.changeToolSize.bind(this);
         this.changeToolColor = this.changeToolColor.bind(this);
 
         pubsub.on("tool-size", this.changeToolSize);
         pubsub.on("tool-color", this.changeToolColor);
-
-        this.bindEvents();
     }
 
     changeToolSize() {
@@ -41,7 +37,8 @@ export class Line {
     }
 
     destructor() {
-        this.unbindEvents();
+        super.destructor();
+
         this._line = null;
 
         pubsub.off("tool-size", this.changeToolSize);

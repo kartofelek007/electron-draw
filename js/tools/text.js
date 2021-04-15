@@ -1,19 +1,19 @@
 import globalState from "../global-state.js";
 import pubsub from "../pubsub.js";
 import board from "../board.js";
+import Tool from "./tool.js";
 
-export class Text {
+export class Text extends Tool {
     constructor() {
+        super();
+
         this.name = "text";
+        this._text = null;
 
         board.disableSelection();
 
         this.mouseDown = this.mouseDown.bind(this);
         this.pressEscape = this.pressEscape.bind(this);
-
-        this.bindEvents();
-        this._text = null;
-
         this.changeToolSize = this.changeToolSize.bind(this);
 
         pubsub.on("tool-size", this.changeToolSize);
@@ -27,7 +27,8 @@ export class Text {
     }
 
     destructor() {
-        this.unbindEvents();
+        super.destructor();
+
         this._text = null;
 
         pubsub.off("tool-size", this.changeToolSize);

@@ -1,28 +1,24 @@
 import globalState from "../global-state.js";
 import pubsub from "../pubsub.js";
 import board from "../board.js";
+import Tool from "./tool.js";
 
-export class Arrow {
+export class Arrow extends Tool {
     constructor() {
+        super();
+
         this.name = "arrow";
-
-        board.disableSelection();
-
         this._startX = 0;
         this._startY = 0;
         this._line = null;
         this._draw = false;
 
-        this.onMouseDown = this.onMouseDown.bind(this);
-        this.onMouseMove = this.onMouseMove.bind(this);
-        this.onMouseUp = this.onMouseUp.bind(this);
         this.changeToolSize = this.changeToolSize.bind(this);
         this.changeToolColor = this.changeToolColor.bind(this);
 
+        board.disableSelection();
         pubsub.on("tool-size", this.changeToolSize);
         pubsub.on("tool-color", this.changeToolColor);
-
-        this.bindEvents();
     }
 
     changeToolSize() {

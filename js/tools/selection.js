@@ -2,20 +2,20 @@ import globalState from "../global-state.js";
 import {hexToRGBA} from "../utils/colors.js";
 import pubsub from "../pubsub.js";
 import board from "../board.js";
+import Tool from "./tool.js";
 
-export class Selection {
+export class Selection extends Tool {
     constructor() {
+        super();
+
         this.name = "selection";
-
-        this.onKeyUp = this.onKeyUp.bind(this);
-        this.onKeyDown = this.onKeyDown.bind(this);
         this._clipboard = null;
-
-        this.bindEvents();
 
         board.enableSelection();
         board.cursorDefault();
 
+        this.onKeyUp = this.onKeyUp.bind(this);
+        this.onKeyDown = this.onKeyDown.bind(this);
         this.changeToolSize = this.changeToolSize.bind(this);
         this.changeToolColor = this.changeToolColor.bind(this);
 
@@ -93,12 +93,12 @@ export class Selection {
     }
 
     destructor() {
+        super.destructor();
+
         this._clipboard = null;
 
         board.disableSelection();
         board.cursorHidden();
-
-        this.unbindEvents();
 
         pubsub.off("tool-size", this.changeToolSize);
         pubsub.off("tool-color", this.changeToolColor);
