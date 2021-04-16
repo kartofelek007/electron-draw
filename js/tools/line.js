@@ -1,5 +1,4 @@
 import globalState from "../global-state.js";
-import pubsub from "../pubsub.js";
 import board from "../board.js";
 import Tool from "./tool.js";
 
@@ -14,12 +13,6 @@ export class Line extends Tool {
         this._draw = false;
 
         board.disableSelection();
-
-        this.changeToolSize = this.changeToolSize.bind(this);
-        this.changeToolColor = this.changeToolColor.bind(this);
-
-        pubsub.on("tool-size", this.changeToolSize);
-        pubsub.on("tool-color", this.changeToolColor);
     }
 
     changeToolSize() {
@@ -38,11 +31,7 @@ export class Line extends Tool {
 
     destructor() {
         super.destructor();
-
         this._line = null;
-
-        pubsub.off("tool-size", this.changeToolSize);
-        pubsub.off("tool-color", this.changeToolColor);
     }
 
     bindEvents() {

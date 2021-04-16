@@ -1,4 +1,3 @@
-import pubsub from "../pubsub.js";
 import board from "../board.js";
 import Tool from "./tool.js";
 
@@ -13,11 +12,7 @@ export class SpotLight extends Tool {
 
         board.disableSelection();
 
-        this.onMouseMove = this.onMouseMove.bind(this);
         this.changeZoom = this.changeZoom.bind(this);
-        this.changeToolSize = this.changeToolSize.bind(this);
-
-        pubsub.on("tool-size", this.changeToolSize);
     }
 
     changeToolSize() {
@@ -26,7 +21,6 @@ export class SpotLight extends Tool {
 
     destructor() {
         super.destructor();
-        pubsub.off("tool-size", this.changeToolSize);
     }
 
     bindEvents() {

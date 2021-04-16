@@ -1,7 +1,7 @@
 import globalState from "../global-state.js";
-import pubsub from "../pubsub.js";
 import board from "../board.js";
 import Tool from "./tool.js";
+import pubsub from "../pubsub.js";
 
 export class Text extends Tool {
     constructor() {
@@ -12,11 +12,7 @@ export class Text extends Tool {
 
         board.disableSelection();
 
-        this.mouseDown = this.mouseDown.bind(this);
         this.pressEscape = this.pressEscape.bind(this);
-        this.changeToolSize = this.changeToolSize.bind(this);
-
-        pubsub.on("tool-size", this.changeToolSize);
     }
 
     changeToolSize() {
@@ -28,26 +24,23 @@ export class Text extends Tool {
 
     destructor() {
         super.destructor();
-
         this._text = null;
-
-        pubsub.off("tool-size", this.changeToolSize);
     }
 
     bindEvents() {
-        board.canvas.on("mouse:down", this.mouseDown);
+        board.canvas.on("mouse:down", this.onMouseDown);
         document.addEventListener("mousemove", this.drawHelper);
         document.addEventListener("keyup", this.pressEscape);
     }
 
     unbindEvents() {
-        board.canvas.off("mouse:down", this.mouseDown);
+        board.canvas.off("mouse:down", this.onMouseDown);
         document.removeEventListener("mousemove", this.drawHelper);
         document.removeEventListener("keyup", this.pressEscape);
     }
 
     pressEscape(e) {
-        if (e.key.toUpperCase() === "ESCAPE" && globalState.getTool().name !== "selection") {
+        if (e.key.toLowerCase() === "escape" && globalState.getTool().name !== "selection") {
             board.disableSelection();
 
             if (this._text) {
@@ -83,7 +76,7 @@ export class Text extends Tool {
         board.ctx2.restore();
     }
 
-    mouseDown(o) {
+    onMouseDown(o) {
         const pointer = board.canvas.getPointer(o.e);
 
         this._text = new fabric.IText('text', {

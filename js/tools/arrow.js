@@ -1,5 +1,4 @@
 import globalState from "../global-state.js";
-import pubsub from "../pubsub.js";
 import board from "../board.js";
 import Tool from "./tool.js";
 
@@ -13,12 +12,7 @@ export class Arrow extends Tool {
         this._line = null;
         this._draw = false;
 
-        this.changeToolSize = this.changeToolSize.bind(this);
-        this.changeToolColor = this.changeToolColor.bind(this);
-
         board.disableSelection();
-        pubsub.on("tool-size", this.changeToolSize);
-        pubsub.on("tool-color", this.changeToolColor);
     }
 
     changeToolSize() {
@@ -36,11 +30,8 @@ export class Arrow extends Tool {
     }
 
     destructor() {
-        this.unbindEvents();
+        super.destructor();
         this._line = null;
-
-        pubsub.off("tool-color", this.changeToolColor);
-        pubsub.off("tool-size", this.changeToolSize);
     }
 
     unbindEvents() {

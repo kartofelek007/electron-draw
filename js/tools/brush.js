@@ -1,5 +1,4 @@
 import globalState from "../global-state.js";
-import pubsub from "../pubsub.js";
 import board from "../board.js";
 import Tool from "./tool.js";
 
@@ -14,12 +13,6 @@ export class Brush extends Tool {
 
         board.canvas.freeDrawingBrush.color = globalState.getColor();
         board.canvas.freeDrawingBrush.width = globalState.getSize();
-
-        this.changeToolSize = this.changeToolSize.bind(this);
-        this.changeToolColor = this.changeToolColor.bind(this);
-
-        pubsub.on("tool-size", this.changeToolSize);
-        pubsub.on("tool-color", this.changeToolColor);
     }
 
     changeToolSize() {
@@ -32,11 +25,7 @@ export class Brush extends Tool {
 
     destructor() {
         super.destructor();
-
         board.canvas.isDrawingMode = false;
-
-        pubsub.off("tool-color", this.changeToolColor);
-        pubsub.off("tool-size", this.changeToolSize);
     }
 
     bindEvents() {

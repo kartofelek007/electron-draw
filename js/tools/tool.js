@@ -1,3 +1,5 @@
+import pubsub from "../pubsub.js";
+
 export default class Tool {
     constructor() {
         if (this.constructor === Tool) {
@@ -10,12 +12,20 @@ export default class Tool {
         this.onMouseMove = this.onMouseMove.bind(this);
         this.onMouseUp = this.onMouseUp.bind(this);
         this.drawHelper = this.drawHelper.bind(this);
+        this.changeToolSize = this.changeToolSize.bind(this);
+        this.changeToolColor = this.changeToolColor.bind(this);
+
+        pubsub.on("tool-size", this.changeToolSize);
+        pubsub.on("tool-color", this.changeToolColor);
 
         this.bindEvents();
     }
 
     destructor() {
         this.unbindEvents();
+
+        pubsub.off("tool-size", this.changeToolSize);
+        pubsub.off("tool-color", this.changeToolColor);
     }
 
     onMouseMove() {
@@ -40,5 +50,13 @@ export default class Tool {
 
     unbindEvents() {
         throw "Method unbindEvents() should be overwritten";
+    }
+
+    changeToolColor() {
+        throw "Method changeToolColor() should be overwritten";
+    }
+
+    changeToolSize() {
+        throw "Method changeToolSize() should be overwritten";
     }
 }
