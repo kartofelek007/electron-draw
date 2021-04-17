@@ -17,7 +17,6 @@ export default {
 
     emit(event, data = {}) {
         if (this.subscribers[event] === undefined) return;
-        console.log(this.subscribers[event]);
         this.subscribers[event].forEach(fn => fn(data));
     }
 }

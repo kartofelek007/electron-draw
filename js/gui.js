@@ -144,8 +144,6 @@ class Gui {
                 } else {
                     this.elementColorList.classList.remove("gui-menu--left");
                 }
-
-                //this.elementColorList.classList.
             }
         });
 

@@ -2,12 +2,19 @@ body {
     margin: 5px;
     height: 100vh;
     overflow: hidden;
-    /*background: url(../images/2020-03-17_223546.png);*/
-    /*background: url(../images/2020-03-19_192223.png);*/
+    background-color: #013564;
+    background: url(../images/bg2.jpg);
+    background-position: center;
+    background-size: cover;
 }
 
 body.white-board-mode {
-    background: #fff url(../images/paper1.png);
+    --color: rgba(0,0,0,0.1);
+    --size: 30px;
+    background:
+    linear-gradient(var(--color) 1px, transparent 1px) left top / var(--size) var(--size),
+    linear-gradient(90deg, var(--color) 1px, transparent 1px) left top / var(--size) var(--size);
+    background-color: #eee;
 }
 
 .canvas-container:not(.default),

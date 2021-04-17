@@ -110,10 +110,6 @@ export default {
         return state.mouse;
     },
 
-    getMouse() {
-        return state.mouse;
-    },
-
     set canChangeColor(bool) {
         state.canChangeColor = bool;
     },

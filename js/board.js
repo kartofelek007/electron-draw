@@ -7,6 +7,7 @@ class Board {
         this.canvas = new fabric.Canvas(el, {
             preserveObjectStacking: true
         });
+
         this.canvas.setHeight(window.innerHeight);
         this.canvas.setWidth(window.innerWidth);
         this.container = el.parentElement;
@@ -23,6 +24,10 @@ class Board {
         this.clearCanvas2 = this.clearCanvas2.bind(this);
         this.updateCanvas2 = this.updateCanvas2.bind(this);
 
+        window.addEventListener("resize", e => {
+            this.resizeCanvases();
+        })
+
         pubsub.on("board-clearCanvas1", this.clearCanvas1);
         pubsub.on("board-clearCanvas2", this.clearCanvas2);
         pubsub.on("board-updateCanvas2", this.updateCanvas2);
@@ -30,6 +35,15 @@ class Board {
         pubsub.on("tool-type", this.updateCanvas2);
         pubsub.on("tool-color", this.updateCanvas2);
         pubsub.on("tool-size", this.updateCanvas2);
+    }
+
+    resizeCanvases() {
+        this.canvas.setWidth(  window.innerWidth  );
+        this.canvas.setHeight( window.innerHeight );
+        this.canvas.calcOffset();
+
+        this.canvas2.width =  window.innerWidth;
+        this.canvas2.height = window.innerHeight;
     }
 
     cursorHidden() {
@@ -61,8 +75,8 @@ class Board {
 
     updateCanvas2() {
         document.dispatchEvent(new MouseEvent("mousemove", {
-            clientX : globalState.getMouse().x,
-            clientY : globalState.getMouse().y
+            clientX : globalState.mouse.x,
+            clientY : globalState.mouse.y
         }))
     }
 

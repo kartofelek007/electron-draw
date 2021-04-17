@@ -56,24 +56,11 @@ if (configTest.errors.length) {
             return path.filePaths[0];
         },
 
-        makeFullScreen() {
-            const { screen } = require("electron");
-            const { width: screenW, height: screenH } = screen.getPrimaryDisplay().workAreaSize;
-            const { getCursorScreenPoint, getDisplayNearestPoint } = screen;
-
-            const currentScreen = getDisplayNearestPoint(getCursorScreenPoint());
-            this.mainWindow.setBounds(currentScreen.size);
-        },
-
-        toggleWindow(show) {
-            this.windowOpen = show;
-
-            if (!show) {
-                this.mainWindow.hide();
+        toggleWindow() {
+            if (this.windowOpen) {
+                this.mainWindow.minimize();
             } else {
-                //this.mainWindow.setFullScreen(true);
-                this.makeFullScreen();
-                this.mainWindow.show();
+                this.mainWindow.restore();
             }
         },
 
@@ -95,18 +82,11 @@ if (configTest.errors.length) {
         },
 
         createWindow() {
-
-            //FIXME: fullScreen zostawia border po bokach na ktorych nei dziala kursor
-
-
             this.mainWindow = new BrowserWindow({
-                transparent: true,
-                alwaysOnTop: true,
-                frame: false,
-                fullscreen: false,
-                resizable: false,
+                width: 1500,
+                height: 1000,
+                resizable: true,
                 icon: path.join(__dirname, 'images/icon.png'),
-                kiosk: true,
                 webPreferences: {
                     nodeIntegration: true,
                     enableRemoteModule: true,
@@ -114,33 +94,26 @@ if (configTest.errors.length) {
                 }
             });
 
+            this.mainWindow.on("minimize", e => {
+                this.windowOpen = false;
+            })
 
+            this.mainWindow.on("restore", e => {
+                this.windowOpen = true;
+            })
 
             this.mainWindow.loadFile('index.html');
-            //this.mainWindow.setFullScreen(true);
-            this.makeFullScreen();
-
-            if (config.startHidden) {
-                //this.mainWindow.hide();
-                //this.windowOpen = false;
-            }
 
             if (!debug) {
                 Menu.setApplicationMenu(null);
             }
-
-            //this.mainWindow.on("blur", e => {
-            //    this.toggleWindow(false);
-            //});
-
         },
 
         bindKeys() {
             //F7 - chowa aplikację - dość ważna funkcjonalność.
             //jak nie zadziała nie odpalam aplikacji
             const reg1 = globalShortcut.register(keyToggle, () => {
-                this.windowOpen = !this.windowOpen;
-                this.toggleWindow(this.windowOpen);
+                this.toggleWindow();
             });
 
 
@@ -245,8 +218,6 @@ if (configTest.errors.length) {
             app.on('activate', () => {
                 if (BrowserWindow.getAllWindows().length === 0) this.createWindow()
             });
-
-
         }
     };
 
