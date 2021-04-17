@@ -38,9 +38,6 @@ if (configTest.errors.length) {
 
     let tray = ""; //musi byc globalne?
 
-    const keyToggle = config.toggleKey;
-    const keyExit = config.quitKey;
-
     const myApp = {
         mainWindow: false,
         contextMenu: false,
@@ -65,17 +62,6 @@ if (configTest.errors.length) {
         },
 
         makeCommunicationWithRender() {
-            ipcMain.on('escPressed', (event, arg) => {
-
-                this.toggleWindow(false);
-                event.returnValue = ''
-            });
-
-            ipcMain.on('quitPressed', (event, arg) => {
-                app.quit();
-                event.returnValue = ''
-            });
-
             ipcMain.on('getFolderToSave', async (event, arg) => {
                 event.returnValue = await this.showFolderSelectPopup();
             });
@@ -107,32 +93,6 @@ if (configTest.errors.length) {
             if (!debug) {
                 Menu.setApplicationMenu(null);
             }
-        },
-
-        bindKeys() {
-            //F7 - chowa aplikację - dość ważna funkcjonalność.
-            //jak nie zadziała nie odpalam aplikacji
-            const reg1 = globalShortcut.register(keyToggle, () => {
-                this.toggleWindow();
-            });
-
-
-            if (!reg1) {
-                let msg = `Nie udało się zarejestrować klawiszy:\n\n`;
-
-                if (!reg1) {
-                    msg += config.toggleKey + " - klawisze służące do pokazywania/ukrywania okna aplikacji\n";
-                    msg += "\nZmień je na inne w pliku settings.json (toggleKey) i spróbuj ponownie"
-                }
-
-                dialog.showMessageBoxSync({
-                    type: "error",
-                    title: "Błąd rejestracji klawiszy",
-                    message: msg
-                })
-            }
-
-            return reg1;
         },
 
         createContextMenu() {
@@ -195,24 +155,15 @@ if (configTest.errors.length) {
                 //ubuntu fix for black window1
 
                 setTimeout(() => {
-                    if (this.bindKeys()) {
-                        this.createWindow();
-                        this.makeCommunicationWithRender();
-                        this.createContextMenu();
-                        this.createTrayIcon();
-                    } else {
-                        app.quit()
-                    }
+                    this.createWindow();
+                    this.makeCommunicationWithRender();
+                    this.createContextMenu();
+                    this.createTrayIcon();
                 }, 1000);
             });
 
             app.on('window-all-closed', () => {
                 if (process.platform !== 'darwin') app.quit()
-            });
-
-            app.on('will-quit', () => {
-                globalShortcut.unregister(keyToggle);
-                globalShortcut.unregister(keyExit);
             });
 
             app.on('activate', () => {

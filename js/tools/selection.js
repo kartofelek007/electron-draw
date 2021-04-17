@@ -175,8 +175,6 @@ export class Selection extends Tool {
                 });
             }
         }
-
-
     }
 
     onKeyDown(e) {

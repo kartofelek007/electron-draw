@@ -14,6 +14,8 @@ export default class Tool {
         this.drawHelper = this.drawHelper.bind(this);
         this.changeToolSize = this.changeToolSize.bind(this);
         this.changeToolColor = this.changeToolColor.bind(this);
+        this.onKeyDown = this.onKeyDown.bind(this);
+        this.onKeyUp = this.onKeyUp.bind(this);
 
         pubsub.on("tool-size", this.changeToolSize);
         pubsub.on("tool-color", this.changeToolColor);
@@ -28,35 +30,23 @@ export default class Tool {
         pubsub.off("tool-color", this.changeToolColor);
     }
 
-    onMouseMove() {
-        throw "Method onMouseMove() should be overwritten";
-    }
+    onMouseMove() {}
 
-    onMouseDown() {
-        throw "Method onMouseDown() should be overwritten";
-    }
+    onMouseDown() {}
 
-    onMouseUp() {
-        throw "Method onMouseUp() should be overwritten";
-    }
+    onMouseUp() {}
 
-    drawHelper() {
-        throw "Method drawHelper() should be overwritten";
-    }
+    drawHelper() {}
 
-    bindEvents() {
-        throw "Method bindEvents() should be overwritten";
-    }
+    bindEvents() {}
 
-    unbindEvents() {
-        throw "Method unbindEvents() should be overwritten";
-    }
+    unbindEvents() {}
 
-    changeToolColor() {
-        throw "Method changeToolColor() should be overwritten";
-    }
+    changeToolColor() {}
 
-    changeToolSize() {
-        throw "Method changeToolSize() should be overwritten";
-    }
+    changeToolSize() {}
+
+    onKeyDown() {}
+
+    onKeyUp() {}
 }

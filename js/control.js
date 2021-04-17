@@ -83,32 +83,6 @@ const functionsToBind = {
         }
     },
 
-    escape(e) {
-        if (e.key.toUpperCase() === "ESCAPE" && globalState.canChangeTool) {
-            pubsub.emit("board-clearCanvas1");
-
-            setTimeout(() => {
-                if (globalState.getTool() !== null) {
-                    pubsub.emit("board-clearCanvas2");
-                    globalState.getTool().destructor();
-                }
-
-                globalState.setTool("brush");
-                pubsub.emit("tool-type");
-
-                document.body.classList.remove("white-board-mode");
-                ipcRenderer.sendSync('escPressed', {});
-            }, 100)
-        }
-    },
-
-    quit(e) {
-        //ctrl + q
-        if (e.ctrlKey && e.key === "q") {
-            ipcRenderer.sendSync('quitPressed', true);
-        }
-    },
-
     saveScreenShoot(e) {
         if (e.key === globalState.getConfig().keys.saveKey) {
             savePrintScreen();
@@ -116,7 +90,6 @@ const functionsToBind = {
     },
 
     init() {
-        this.escape = this.escape.bind(this);
         this.mousemove = this.mousemove.bind(this);
         this.keyUpClearScreen = this.keyUpClearScreen.bind(this);
         this.keyUpGuiHelp = this.keyUpGuiHelp.bind(this);
@@ -125,7 +98,6 @@ const functionsToBind = {
         this.wheelSize = this.wheelSize.bind(this);
         this.whiteBoard = this.whiteBoard.bind(this);
         this.showHideGui = this.showHideGui.bind(this);
-        this.quit = this.quit.bind(this);
     }
 };
 
@@ -135,15 +107,7 @@ functionsToBind.init();
 class Control {
     constructor() {
         this.bindAllEvents();
-
-        //nie do odpiecia - bardzo wazny :D
         document.addEventListener("mousemove", functionsToBind.mousemove);
-
-        //TODO: poprawic to
-        ipcRenderer.on('clearScreenFromMain' , function(event , data) {
-            pubsub.emit("board-updateCanvas2");
-            ipcRenderer.sendSync('afterClearAndToggleWindow', {});
-        });
     }
 
     bindAllEvents() {
@@ -154,8 +118,6 @@ class Control {
         document.addEventListener("wheel", functionsToBind.wheelSize);
         document.addEventListener("keyup", functionsToBind.showHideGui);
         document.addEventListener("keyup", functionsToBind.keyUpGuiHelp);
-        document.addEventListener("keyup", functionsToBind.escape);
-        document.addEventListener("keyup", functionsToBind.quit);
         document.addEventListener("keyup", functionsToBind.saveScreenShoot);
     }
 
@@ -167,8 +129,6 @@ class Control {
         document.removeEventListener("wheel", functionsToBind.wheelSize);
         document.removeEventListener("keyup", functionsToBind.showHideGui);
         document.removeEventListener("keyup", functionsToBind.keyUpGuiHelp);
-        document.removeEventListener("keyup", functionsToBind.escape);
-        document.removeEventListener("keyup", functionsToBind.quit);
         document.removeEventListener("keyup", functionsToBind.saveScreenShoot);
     }
 }

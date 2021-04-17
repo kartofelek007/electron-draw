@@ -15,23 +15,20 @@ export class Rectangle extends Tool {
         this._draw = false;
 
         board.disableSelection();
-
-        this.onKeyDown = this.onKeyDown.bind(this);
-        this.onKeyUp = this.onKeyUp.bind(this);
     }
 
     changeToolSize() {
         if (this._rect !== null) {
-                this._rect.set("strokeWidth", globalState.getSize());
-                board.canvas.requestRenderAll();
-            }
+            this._rect.set("strokeWidth", globalState.getSize());
+            board.canvas.requestRenderAll();
+        }
     }
 
     changeToolColor() {
         if (this._rect !== null) {
-                this._rect.set("stroke", globalState.getColor());
-                board.canvas.requestRenderAll();
-            }
+            this._rect.set("stroke", globalState.getColor());
+            board.canvas.requestRenderAll();
+        }
     }
 
     destructor() {
@@ -40,12 +37,13 @@ export class Rectangle extends Tool {
     }
 
     bindEvents() {
-        document.addEventListener("mousemove", this.drawHelper);
         board.canvas.on("mouse:down", this.onMouseDown);
         board.canvas.on("mouse:move", this.onMouseMove);
         board.canvas.on("mouse:up", this.onMouseUp);
+
         document.addEventListener("keyup", this.onKeyUp);
         document.addEventListener("keydown", this.onKeyDown);
+        document.addEventListener("mousemove", this.drawHelper);
     }
 
     unbindEvents() {
