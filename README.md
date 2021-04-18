@@ -1,6 +1,8 @@
 # Presentation drawing app
 App for drawing over desktop made in Electron
 
+![alt text](readme-data/screenshoot.jpg)
+
 Video from the presentation:
 
 https://www.youtube.com/watch?v=3Hy6OED8XXE
@@ -15,9 +17,6 @@ Run **npm build**. Build app will appear in dist folder. Only **presentation_dra
 
 ### Keys
 Below you can find list of default keys uses in application. You can change it in <strong>settings.json</strong> file.
-
-### Global key:
-**F7** - hide to tray / show from tray. You can change it in settings.json (toggleKey property)</li>
 
 
 ### Tools:
@@ -41,10 +40,9 @@ In select mode you can group / ungroup objects with **Ctrl + G** and **Ctrl + Sh
 
 
 ### Other stuff:
-* * can do this with mouse wheel
-* * can do this with mouse wheel
+* **mouse wheel up** increase size
+* **mouse wheel down** decrease size
 * **c** - clear screen
-* * tray
 * **`** - toggle gui menu
 * **/** - toggle white board
 * **?** - toggle help numbers

@@ -1,6 +1,4 @@
 module.exports = {
-    "toggleKey" : "F7",
-
     "size": {
         "min": 4,
         "max": 30,

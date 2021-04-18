@@ -93,6 +93,8 @@ if (configTest.errors.length) {
             if (!debug) {
                 Menu.setApplicationMenu(null);
             }
+
+            // this.mainWindow.show();
         },
 
         createContextMenu() {

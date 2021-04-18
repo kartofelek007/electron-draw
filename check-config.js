@@ -7,17 +7,6 @@ module.exports = function testSchema(configData) {
         "id": "/Schema",
         "type": "object",
         "properties": {
-
-            "toggleKey": {
-                "type": "string",
-                "required": true
-            },
-
-            "startHidden": {
-                "type": "boolean",
-                "required": true
-            },
-
             "size": {
                 "type": "object",
                 "required": true,
