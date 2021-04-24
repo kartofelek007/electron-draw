@@ -1,5 +1,5 @@
 # Presentation drawing app
-App for drawing over desktop made in Electron
+App for drawing made in Electron
 
 ![alt text](readme-data/screenshoot.png)
 
