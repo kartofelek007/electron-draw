@@ -1,7 +1,6 @@
 import pubsub from "./pubsub.js";
 import globalState from "./global-state.js";
 import { savePrintScreen } from "./utils/savePrintScreen.js";
-const { ipcRenderer } = require('electron');
 
 function metaKeysPress(e) {
     return e.ctrlKey || e.shiftKey || e.altKey || e.metaKey
@@ -18,12 +17,6 @@ const functionsToBind = {
             if (e.key.toLowerCase() === globalState.getConfig().keys.clearScreen && !metaKeysPress(e)) {
                 pubsub.emit("board-clearCanvas1");
             }
-        }
-    },
-
-    keyUpGuiHelp(e) {
-        if (e.key === "?" && metaKeysPress(e) && globalState.canChangeColor && globalState.canChangeSize && globalState.canChangeTool) {
-            pubsub.emit("gui-toggleHelpKey");
         }
     },
 
@@ -71,6 +64,7 @@ const functionsToBind = {
         if (globalState.canChangeTool && globalState.canChangeColor) {
             if (e.key === globalState.getConfig().keys.whiteBoard && !metaKeysPress(e)) {
                 document.body.classList.toggle("white-board-mode");
+                pubsub.emit("white-board", document.body.classList.contains("white-board-mode"))
             }
         }
     },
@@ -92,7 +86,6 @@ const functionsToBind = {
     init() {
         this.mousemove = this.mousemove.bind(this);
         this.keyUpClearScreen = this.keyUpClearScreen.bind(this);
-        this.keyUpGuiHelp = this.keyUpGuiHelp.bind(this);
         this.keyUpTool = this.keyUpTool.bind(this);
         this.keyUpColor = this.keyUpColor.bind(this);
         this.wheelSize = this.wheelSize.bind(this);
@@ -117,7 +110,6 @@ class Control {
         document.addEventListener("keyup", functionsToBind.whiteBoard);
         document.addEventListener("wheel", functionsToBind.wheelSize);
         document.addEventListener("keyup", functionsToBind.showHideGui);
-        document.addEventListener("keyup", functionsToBind.keyUpGuiHelp);
         document.addEventListener("keyup", functionsToBind.saveScreenShoot);
     }
 

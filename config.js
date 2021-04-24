@@ -1,23 +1,37 @@
-const fs = require('fs');
-const defaultConfig = require("./config-default.js");
-const {app} = require("electron");
-const {dialog} = require('electron');
+export default {
+    "size": {
+        "min": 4,
+        "max": 30,
+        "step": 2,
+        "default": 10
+    },
 
-const fileUrl = app.getPath("appData") + "/" + "presentation-draw-settings.json";
-let config = {...defaultConfig};
+    "askToSaveScreenShoot" : true,
 
-try {
-    const rawData = fs.readFileSync(fileUrl, err => {});
-    config = JSON.parse(rawData);
-} catch(err) {
-    fs.writeFile(fileUrl, JSON.stringify(config, null, 1), err => {
-        dialog.showMessageBoxSync({
-            type : "error",
-            title : "Cant't create file with config in %APPDATA% folder",
-            message : configTest.errors
-        });
-        throw new Error("Cant't create file with config in %APPDATA% folder");
-    });
-}
+    "keys" : {
+        "hideGui" : "`",
+        "clearScreen": "c",
+        "whiteBoard": "/",
+        "saveKey" : ".",
 
-module.exports = config;
+        "colors": [
+            {"key" : "r", "name": "red", "color" : "#FA122E"},
+            {"key" : "g", "name": "green", "color" : "#2CD864"},
+            {"key" : "b", "name": "blue", "color" : "#0080FF"},
+            {"key" : "o", "name": "orange", "color" : "#FF9B00"},
+            {"key" : "y", "name": "yellow", "color" : "#E3E36A"},
+            {"key" : "v", "name": "violet", "color" : "#7200DA"},
+            {"key" : "d", "name": "dark", "color" : "#311e3e"},
+            {"key" : "w", "name": "white", "color" : "#fffcf0"},
+        ],
+
+        "tools" : [
+            {"key": "1", "name": "selection", "tool": "selection"},
+            {"key": "2", "name": "brush", "tool": "brush"},
+            {"key": "3", "name": "rectangle", "tool": "rectangle"},
+            {"key": "4", "name": "line", "tool": "line"},
+            {"key": "5", "name": "arrow", "tool": "arrow"},
+            {"key": "6", "name": "text", "tool": "text"}
+        ]
+    }
+};

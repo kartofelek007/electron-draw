@@ -1,273 +1,86 @@
 .gui {
-    --border-radius: 2px;
-    --box-shadow: 0 0 0 1px rgba(0,0,0,0.2), 0 1px 6px rgba(0,0,0,0.1);
-    --color-border-radius: 2px;
-    --menu-border-radius : 3px;
-
-    /* default dark */
-    --bg-color: rgba(69,69,69, 1);
-    --menu-bg-color: var(--bg-color);
-    --icon-color: rgba(255,255,255,0.7);
-    --icon-active-color: rgba(255,255,255,0.7);
-    --icon-active-bg: rgba(0,0,0,0.5);
-    --icon-active-bg-border: rgba(255,255,255,0.3);
-    --move-icon-color: rgba(255,255,255,0.2);
-    --move-bg: rgba(0,0,0,0.2);
-    --icon-key-bg: rgba(0,0,0,1);
-    --icon-key-color: #fff;
-}
-
-.gui--white {
-    --bg-color: rgba(244,243,244, 1);
-    --menu-bg-color: var(--bg-color);
-    --icon-color: rgba(0,0,0,0.5);
-    --icon-active-color: rgba(255,255,255,1);
-    --icon-active-bg: rgba(0,41,255,1);
-    --icon-active-bg-border: rgba(0,41,255,1);
-    --move-icon-color: rgba(0,0,0,0.2);
-    --move-bg: none;
-    --icon-key-bg: rgba(0,0,0,1);
-    --icon-key-color: #fff;
-}
-
-.gui {
     position: absolute;
-    left: 10px;
-    top: 10px;
-    z-index: 100;
-    display: none;
-    font-family: sans-serif;
-    font-size: 13px;
-    font-weight: bold;
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    user-select: none;
-    box-sizing: border-box;
-    align-items: center;
+    left: 50%;
+    bottom: 30px;
+    transform: translate(-50%);
+    display: flex;
+    gap: 30px;
     justify-content: center;
-
-    width: 40px;
-    min-height: 40px;
-    background: var(--bg-color);
-    border-radius: var(--border-radius);
-    box-shadow: var(--box-shadow);
+    z-index: 3;
+    --color: #FFF;
 }
-.gui-move {
-    background: var(--move-bg);
-    min-height: 15px;
+
+.gui.dark {
+    --color: #555;
+}
+
+.gui-el {
+    width: 70px;
+    height: 70px;
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-bottom: 10px;
-    border-radius: var(--border-radius) var(--border-radius) 0 0;
-    cursor: move;
-}
-.gui-move svg {
-    pointer-events: none;
-    max-width: 18px;
-    fill: var(--move-icon-color);
-}
-.gui-ready {
-    display: block;
-}
-.gui-hidden {
-    opacity: 0;
-    pointer-events: none;
-}
-.gui-non-interactive {
-    pointer-events: none;
-}
-.gui-section {
     position: relative;
+    opacity: 0.5;
+    cursor: pointer;
+    --border-width: 2px;
 }
-.gui-menu {
-    box-sizing: border-box;
-    height: 40px;
-    padding: 5px;
-    background: var(--menu-bg-color);
-    border-radius: var(--menu-border-radius);
-    list-style: none;
-    margin: 0;
-    display: flex;
-    align-items: center;
-    opacity: 0;
-    pointer-events: none;
-    transition: 0.1s;
-    position: absolute;
-    left: 45px;
-    top: 50%;
-    transform: translateY(-50%);
-    box-shadow: var(--box-shadow);
-}
-.gui-menu--left {
-    left: auto;
-    right: 45px;
-}
-.gui-menu::before {
-    content:"";
-    width: 30px;
-    height: 100%;
-    background: transparent;
-    position: absolute;
-    left:-30px;
-    top:0;
-}
-.gui-menu--left::before {
-    right:-30px;
-    left: auto;
-}
-.gui-section:hover .gui-menu {
+
+.gui-el.active {
     opacity: 1;
-    pointer-events: all;
+    --border-width: 3px;
 }
 
-
-/**************************************************/
-/* gui colors */
-/**************************************************/
-.gui-colors-current {
-    margin: 5px auto 0;
+.gui-el-with-color {
+    opacity: 1;
 }
-.color {
+
+.gui-el__color {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+}
+
+.gui-el__icon {
+}
+
+.gui-el__icon svg {
+    width: 24px;
+    fill: var(--color);
+}
+
+.gui-el__bg {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 100%;
+    height: 100%;
+    transform: translate(-50%, -50%);
+    border: var(--border-width) solid var(--color);
+    border-radius: 50%;
+    --x: 26px;
+    --y: 25px;
+    clip-path: polygon(var(--x) 0, 100% 0, 100% 100%, 0 100%, 0 var(--y), var(--x) var(--y));
+}
+
+.gui-el-with-color .gui-el__bg {
+    clip-path: none;
+}
+
+.gui-el__key {
+    position: absolute;
+    left: -8px;
+    top: -8px;
+    border-radius: 50%;
+    z-index: 2;
     width: 30px;
     height: 30px;
-    border-radius: var(--color-border-radius);
-    background: white;
-    box-shadow: inset 0 0 0 1px rgba(0,0,0,0.2);
-}
-.gui-colors-list {
-    display: flex;
-    padding:0;
-    margin:0;
-    list-style: none;
-}
-.gui-colors-list li {
-    margin-right: 5px;
-    cursor: pointer;
-}
-.gui-colors-list li:last-child {
-    margin-right: 0;
-}
-.gui-colors-list li.active {
-    box-shadow: inset 0 0 0 1px rgba(0,0,0,0.7), inset 0 0 0 3px rgba(0,0,0,.6);
-}
-.gui-colors-list li.active:hover {
-    transform: scale(1);
-}
-
-
-
-
-/**************************************************/
-/* gui tools */
-/**************************************************/
-.gui-tools {
-    list-style: none;
-    padding: 10px 0;
-    margin: 0;
-    padding-bottom: 0;
-}
-
-.gui-tools-hide {
-    opacity: 0;
-}
-
-.gui-tools li {
-    min-height:30px;
+    box-shadow: inset 0 0 0 var(--border-width) var(--color);
     display: flex;
     justify-content: center;
     align-items: center;
+    color: var(--color);
     font-family: sans-serif;
+    font-size: 14px;
     font-weight: bold;
-    font-size: 12px;
-    position: relative;
-    cursor: pointer;
-    padding: 0 5px;
-}
-.gui-tools li:first-child {}
-.gui-tools li:last-child {
-    margin-bottom: 5px;
-}
-.gui-tools-svg-cnt {
-    justify-content: center;
-    align-items: center;
-    display: flex;
-}
-
-.gui-tools-key {
-    color: var(--icon-color);
-    position: absolute;
-    font-size: 16px;
-    font-weight: bold;
-    right: -30px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    top: 50%;
-    transform: translate(-5px, -50%);
-    width: 24px;
-    height: 24px;
-    background: var(--icon-key-bg);
-    border-radius: 50%;
-    opacity: 0;
-    transition: 0.2s opacity, 0.2s transform;
-    pointer-events: none;
-}
-
-.gui.with-help .gui-tools-key {
-    opacity: 1;
-    transform: translate(5px, -50%);
-}
-
-.gui-tools-key svg {
-    position: relative;
-    top: 1px;
-    opacity: 0.6;
-}
-
-.gui-tools-key text {
-    font-size: 12px;
-    font-weight: bold;
-    fill: var(--icon-key-color);
-    stroke: black;
-    stroke-width: 4px;
-    paint-order: stroke fill;
-}
-
-.gui-tools .gui-tools-svg-cnt svg {
-    fill: var(--icon-color);
-    width: 15px;
-    height: 15px;
-}
-
-.gui-tools li.active {
-    background: var(--icon-active-bg);
-    position: relative;
-}
-.gui-tools li.active .gui-tools-svg-cnt svg {
-    fill: var(--icon-active-color)
-}
-.gui-tools li.active::before,
-.gui-tools li.active::after {
-    content: "";
-    position: absolute;
-    left:0;
-    width: 100%;
-    height: 1px;
-    background: var(--icon-active-bg-border);
-}
-.gui-tools li.active::before {
-    top:0;
-}
-.gui-tools li.active::after {
-    bottom: 0;
-}
-
-.gui-tools li.active {
-    --color: rgba(255,255,255,1);
-    --stroke : rgba(0,0,0,0.4);
-}
-
-.gui-tools li.active .gui-tools-key svg {
-    opacity: 1;
 }

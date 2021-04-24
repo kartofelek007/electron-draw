@@ -4,7 +4,6 @@ import { Rectangle } from "./tools/rectangle.js"
 import { Line } from "./tools/line.js"
 import { Arrow } from "./tools/arrow.js"
 import { Text } from "./tools/text.js"
-import { SpotLight } from "./tools/spot-light.js"
 
 class FactoryTool {
     generateTool(name) {
@@ -21,8 +20,6 @@ class FactoryTool {
                 return new Arrow();
             case 'text':
                 return new Text();
-            case 'spot':
-                return new SpotLight();
         }
     }
 }

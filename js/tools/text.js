@@ -80,7 +80,7 @@ export class Text extends Tool {
         const pointer = board.canvas.getPointer(o.e);
 
         this._text = new fabric.IText('text', {
-            fontFamily: 'Open Sans',
+            fontFamily: 'Open Sans, sans-serif',
             left: pointer.x,
             top: pointer.y - ((globalState.getTextSize() + 20) / 2),
             fontSize: globalState.getTextSize() + 20,
