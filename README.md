@@ -1,7 +1,7 @@
 # Presentation drawing app
 App for drawing over desktop made in Electron
 
-![alt text](readme-data/screenshoot.jpg)
+![alt text](readme-data/screenshoot.png)
 
 Video from the presentation:
 
@@ -24,7 +24,6 @@ Below you can find list of default keys uses in application. You can change it i
 * **4** - line
 * **5** - arrow
 * **6** - text
-* **0** - light screen fragment with circle
 
 In select mode you can group / ungroup objects with **Ctrl + G** and **Ctrl + Shift  + G**
 
@@ -43,5 +42,3 @@ In select mode you can group / ungroup objects with **Ctrl + G** and **Ctrl + Sh
 * **c** - clear screen
 * **`** - toggle gui menu
 * **/** - toggle white board
-* **?** - toggle help numbers
-* **Ctrl + q** - quit program
