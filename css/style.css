@@ -12,8 +12,7 @@ body {
 }
 
 body.white-board-mode {
-    --color1: #fff;
-    --color2: #fff;
+    background: linear-gradient(#fff, #eee);
 }
 
 .canvas-container:not(.default),
