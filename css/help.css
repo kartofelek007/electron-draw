@@ -1,4 +1,6 @@
 body {
+    --color1: #425DC6;
+    --color2: #3049A0;
     font-family: sans-serif;
     background: #fafafa;
     font-size: 15px;
@@ -13,7 +15,8 @@ body {
 }
 
 h1, h2, h3 {
-    color: #f4334c;
+    color: #333;
+    font-size: 30px;
     margin-top: 40px;
 }
 
@@ -22,7 +25,7 @@ ul {
     list-style: none;
     border: 1px solid #ddd;
     padding: 20px;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+    margin-bottom: 30px;
 }
 
 li {
@@ -36,7 +39,7 @@ li {
 
 li .key {
     margin-right: 20px;
-    background: #f4334c;
+    background: var(--color1);
     color: #fff;
     min-width: 30px;
     height: 30px;

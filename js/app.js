@@ -13,4 +13,3 @@ gui.init();
 globalState.setTool("brush");
 globalState.setColor(globalState.getConfig().keys.colors[0].color);
 globalState.setSize(globalState.getConfig().size.default);
-

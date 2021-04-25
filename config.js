@@ -3,7 +3,7 @@ export default {
         "min": 4,
         "max": 30,
         "step": 2,
-        "default": 10
+        "default": 8
     },
 
     "askToSaveScreenShoot" : true,

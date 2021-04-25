@@ -42,7 +42,8 @@ class Gui {
             <div class="gui-el gui-el-with-color">
                 <div class="gui-el__color" id="guiCurrentColor"></div>
                 <div class="gui-el__bg"></div>
-            </div>            
+            </div>          
+            <div class="gui-tools" id="guiToolsPlace"></div>  
         `;
     }
 
@@ -79,12 +80,12 @@ class Gui {
                 pubsub.emit("tool-type");
             });
 
-            this.elementGui.append(div);
+            this.elementTools.append(div);
         }
     }
 
     markCurrentTool() {
-        const icons = this.elementGui.querySelectorAll(".gui-el");
+        const icons = this.elementTools.querySelectorAll(".gui-el");
         icons.forEach(el => {
             if (el.dataset.tool === globalState.getTool().name) {
                 el.classList.add("active");

@@ -1,43 +1,58 @@
 .gui {
+    --color: #FFF;
+    --border-width: 3px;
+    --gap: 30px;
+
     position: absolute;
     left: 50%;
-    bottom: 30px;
+    top: 30px;
     transform: translate(-50%);
     display: flex;
-    gap: 30px;
+    gap: var(--gap);
     justify-content: center;
     z-index: 3;
-    --color: #FFF;
 }
 
 .gui.dark {
     --color: #555;
 }
 
+.gui.dark .gui-el.active {
+    --color: #444;
+}
+
+.gui-tools {
+    display: flex;
+    gap: var(--gap);
+}
+
 .gui-el {
     width: 70px;
     height: 70px;
-    display: flex;
+    display: inline-flex;
     justify-content: center;
     align-items: center;
     position: relative;
-    opacity: 0.5;
+    opacity: 0.3;
     cursor: pointer;
-    --border-width: 2px;
 }
 
 .gui-el.active {
     opacity: 1;
-    --border-width: 3px;
 }
 
 .gui-el-with-color {
     opacity: 1;
+    cursor: none;
+}
+
+.gui-el-with-color .gui-el__bg {
+    opacity: 0.3;
 }
 
 .gui-el__color {
-    width: 100%;
-    height: 100%;
+    width: calc(100% - 2 * var(--border-width) - 4px);
+    height: calc(100% - 2 * var(--border-width) - 4px);
     border-radius: 50%;
 }
 
