@@ -42,10 +42,12 @@
 }
 
 .gui-el__icon {
+    pointer-events: none;
 }
 
 .gui-el__icon svg {
     width: 24px;
+    height: 24px;
     fill: var(--color);
 }
 

@@ -32,15 +32,50 @@ body.white-board-mode {
     z-index: 0;
 }
 
-.screenshoot-save-completed {
+.tooltip {
     font-family: sans-serif;
-    padding: 10px;
-    font-size: 12px;
+    padding: 10px 10px 10px 20px;
+    border-radius: 5px;
+    font-size: 13px;
     position: absolute;
     right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.7);
+    top: 0;
+    background: rgba(0, 0, 0, 0.8);
     color: #FFF;
     margin: 10px;
-    display: inline-block;
+    z-index: 5;
+    display: inline-flex;
+    align-items: center;
+    gap: 15px;
+}
+.tooltip-close {
+    width: 30px;
+    height: 30px;
+    border: 0;
+    background: none;
+    text-indent: -9999px;
+    overflow: hidden;
+    cursor: pointer;
+    position: relative;
+}
+.tooltip-close:focus {
+    outline: none;
+}
+.tooltip-close::before,
+.tooltip-close::after {
+    content: "";
+    width: 15px;
+    height: 3px;
+    border-radius: 2px;
+    background: #fff;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%) var(--rotate);
+}
+.tooltip-close::before {
+    --rotate: rotate(-45deg);
+}
+.tooltip-close::after {
+    --rotate: rotate(45deg);
 }

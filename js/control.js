@@ -1,6 +1,5 @@
 import pubsub from "./pubsub.js";
 import globalState from "./global-state.js";
-import { savePrintScreen } from "./utils/savePrintScreen.js";
 
 function metaKeysPress(e) {
     return e.ctrlKey || e.shiftKey || e.altKey || e.metaKey
@@ -77,12 +76,6 @@ const functionsToBind = {
         }
     },
 
-    saveScreenShoot(e) {
-        if (e.key === globalState.getConfig().keys.saveKey) {
-            savePrintScreen();
-        }
-    },
-
     init() {
         this.mousemove = this.mousemove.bind(this);
         this.keyUpClearScreen = this.keyUpClearScreen.bind(this);
@@ -120,7 +113,6 @@ class Control {
         document.removeEventListener("keyup", functionsToBind.whiteBoard);
         document.removeEventListener("wheel", functionsToBind.wheelSize);
         document.removeEventListener("keyup", functionsToBind.showHideGui);
-        document.removeEventListener("keyup", functionsToBind.keyUpGuiHelp);
         document.removeEventListener("keyup", functionsToBind.saveScreenShoot);
     }
 }

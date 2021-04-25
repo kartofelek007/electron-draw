@@ -7,7 +7,6 @@ const {
     Tray,
     Menu,
     nativeImage,
-    globalShortcut
 } = require('electron');
 
 //test config ----------------------------
@@ -20,16 +19,6 @@ const myApp = {
     contextMenu: false,
     windowOpen: true,
 
-    async showFolderSelectPopup() {
-        this.toggleWindow(false);
-        const path = await dialog.showOpenDialog({
-            title: 'Select folder to save screenshoot',
-            properties: ["openDirectory"]
-        });
-        this.toggleWindow(true);
-        return path.filePaths[0];
-    },
-
     toggleWindow() {
         if (this.windowOpen) {
             this.mainWindow.minimize();
@@ -39,9 +28,10 @@ const myApp = {
     },
 
     makeCommunicationWithRender() {
-        ipcMain.on('getFolderToSave', async (event, arg) => {
-            event.returnValue = await this.showFolderSelectPopup();
-        });
+        ipcMain.handle("saveScreenShot", async (event, args) => {
+             const img = await this.makeScreenShoot();
+             return img;
+        })
     },
 
     createWindow() {
