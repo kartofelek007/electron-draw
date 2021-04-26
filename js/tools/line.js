@@ -6,6 +6,7 @@ export class Line extends Tool {
     constructor() {
         super();
 
+        this._modifier = false;
         this.name = "line";
         this._startX = 0;
         this._startY = 0;
@@ -17,14 +18,14 @@ export class Line extends Tool {
 
     changeToolSize() {
         if (this._line !== null) {
-            this._line.set("strokeWidth", globalState.getSize());
+            this._line.set("strokeWidth", globalState.size);
             board.canvas.requestRenderAll();
         }
     }
 
     changeToolColor() {
         if (this._line !== null) {
-            this._line.set("stroke", globalState.getColor());
+            this._line.set("stroke", globalState.color);
             board.canvas.requestRenderAll();
         }
     }
@@ -39,6 +40,9 @@ export class Line extends Tool {
         board.canvas.on("mouse:down", this.onMouseDown);
         board.canvas.on("mouse:move", this.onMouseMove);
         board.canvas.on("mouse:up", this.onMouseUp);
+
+        document.addEventListener("keyup", this.onKeyUp);
+        document.addEventListener("keydown", this.onKeyDown);
     }
 
     unbindEvents() {
@@ -46,22 +50,37 @@ export class Line extends Tool {
         board.canvas.off("mouse:down", this.onMouseDown);
         board.canvas.off("mouse:move", this.onMouseMove);
         board.canvas.off("mouse:up", this.onMouseUp);
+
+        document.removeEventListener("keyup", this.onKeyUp);
+        document.removeEventListener("keydown", this.onKeyDown);
     }
 
     drawHelper(e) {
+        if (this._draw) return;
         const x = e.pageX;
         const y = e.pageY;
 
         board.clearCanvas2();
         board.ctx2.save();
         board.ctx2.lineCap = 'round';
-        board.ctx2.fillStyle = globalState.getColor();
+        board.ctx2.fillStyle = globalState.color;
         board.ctx2.globalAlpha = 1;
         board.ctx2.beginPath();
-        board.ctx2.arc(x, y, globalState.getSize() / 2, 0, 2 * Math.PI);
+        board.ctx2.arc(x, y, globalState.size / 2, 0, 2 * Math.PI);
         board.ctx2.fill();
         board.ctx2.closePath();
         board.ctx2.restore();
+    }
+
+    modifyFigureProperties() {
+        if (this._line) {
+            let dashed = false;
+            if (this._modifier) {
+                dashed = [globalState.size, globalState.size];
+            }
+            this._line.set({strokeDashArray : dashed});
+            board.canvas.requestRenderAll();
+        }
     }
 
     onMouseDown(o) {
@@ -73,13 +92,15 @@ export class Line extends Tool {
 
         const points = [pointer.x, pointer.y, pointer.x, pointer.y];
         this._line = new fabric.Line(points, {
-            strokeWidth: globalState.getSize(),
-            fill: globalState.getColor(),
-            stroke: globalState.getColor(),
+            strokeWidth: globalState.size,
+            fill: globalState.color,
+            stroke: globalState.color,
             originX: 'center',
             originY: 'center'
         });
         board.canvas.add(this._line);
+
+        this.modifyFigureProperties();
     }
 
     onMouseMove(o) {
@@ -101,5 +122,19 @@ export class Line extends Tool {
 
         this._draw = false;
         this._line = null;
+    }
+
+    onKeyUp(e) {
+        if (!e.ctrlKey) {
+            this._modifier = false;
+        }
+        this.modifyFigureProperties();
+    }
+
+    onKeyDown(e) {
+        if (e.ctrlKey) {
+            this._modifier = true;
+        }
+        this.modifyFigureProperties();
     }
 }

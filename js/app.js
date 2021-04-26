@@ -7,9 +7,9 @@ import pubsub from "./pubsub.js";
 import gui from "./gui.js";
 import config from "../config.js";
 
-globalState.setConfig(config);
+globalState.config = config;
 gui.init();
 
-globalState.setTool("brush");
-globalState.setColor(globalState.getConfig().keys.colors[0].color);
-globalState.setSize(globalState.getConfig().size.default);
+globalState.tool = "brush";
+globalState.color = globalState.config.keys.colors[0].color;
+globalState.size = globalState.config.size.default;

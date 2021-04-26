@@ -7,6 +7,7 @@ export class Arrow extends Tool {
         super();
 
         this.name = "arrow";
+        this._modifier = false;
         this._startX = 0;
         this._startY = 0;
         this._line = null;
@@ -17,14 +18,14 @@ export class Arrow extends Tool {
 
     changeToolSize() {
         if (this._line !== null) {
-            this._line.set("strokeWidth", globalState.getSize());
+            this._line.set("strokeWidth", globalState.size);
             board.canvas.requestRenderAll();
         }
     }
 
     changeToolColor() {
         if (this._line !== null) {
-            this._line.set("stroke", globalState.getColor());
+            this._line.set("stroke", globalState.color);
             board.canvas.requestRenderAll();
         }
     }
@@ -34,18 +35,24 @@ export class Arrow extends Tool {
         this._line = null;
     }
 
-    unbindEvents() {
-        document.removeEventListener("mousemove", this.drawHelper);
-        board.canvas.off("mouse:down", this.onMouseDown);
-        board.canvas.off("mouse:move", this.onMouseMove);
-        board.canvas.off("mouse:up", this.onMouseUp);
-    }
-
     bindEvents() {
         document.addEventListener("mousemove", this.drawHelper);
         board.canvas.on("mouse:down", this.onMouseDown);
         board.canvas.on("mouse:move", this.onMouseMove);
         board.canvas.on("mouse:up", this.onMouseUp);
+
+        document.addEventListener("keyup", this.onKeyUp);
+        document.addEventListener("keydown", this.onKeyDown);
+    }
+
+    unbindEvents() {
+        document.removeEventListener("mousemove", this.drawHelper);
+        board.canvas.off("mouse:down", this.onMouseDown);
+        board.canvas.off("mouse:move", this.onMouseMove);
+        board.canvas.off("mouse:up", this.onMouseUp);
+
+        document.removeEventListener("keyup", this.onKeyUp);
+        document.removeEventListener("keydown", this.onKeyDown);
     }
 
     drawHelper(e) {
@@ -55,13 +62,25 @@ export class Arrow extends Tool {
         board.clearCanvas2();
         board.ctx2.save();
         board.ctx2.lineCap = 'round';
-        board.ctx2.fillStyle = globalState.getColor();
+        board.ctx2.fillStyle = globalState.color;
         board.ctx2.globalAlpha = 1;
         board.ctx2.beginPath();
-        board.ctx2.arc(x, y, globalState.getSize() / 2, 0, 2 * Math.PI);
+        board.ctx2.arc(x, y, globalState.size / 2, 0, 2 * Math.PI);
         board.ctx2.fill();
         board.ctx2.closePath();
         board.ctx2.restore();
+    }
+
+    modifyFigureProperties() {
+        if (this._line) {
+            let heads = [1, 0];
+            if (this._modifier) {
+                heads = [0, 1];
+            }
+
+            this._line.set({heads : heads});
+            board.canvas.requestRenderAll();
+        }
     }
 
     onMouseDown(o) {
@@ -74,17 +93,21 @@ export class Arrow extends Tool {
         const points = [pointer.x, pointer.y, pointer.x, pointer.y];
 
         this._line = new fabric.LineArrow(points, {
-            strokeWidth: globalState.getSize(),
-            stroke: globalState.getColor(),
+            strokeWidth: globalState.size,
+            stroke: globalState.color,
             originX: 'center',
             originY: 'center',
             fill: "transparent",
             //perPixelTargetFind: true,
             movable: false,
-            heads: [1, 0],
+            heads: this._modifier ? [0, 1] : [1, 0],
             selectable : false,
             objectCaching: false
         });
+
+        this.modifyFigureProperties();
+
+        console.log(this._modifier);
 
         board.canvas.add(this._line);
     }
@@ -114,6 +137,20 @@ export class Arrow extends Tool {
 
         this._draw = false;
         this._line = null;
+    }
+
+    onKeyUp(e) {
+        if (!e.ctrlKey) {
+            this._modifier = false;
+        }
+        this.modifyFigureProperties();
+    }
+
+    onKeyDown(e) {
+        if (e.ctrlKey) {
+            this._modifier = true;
+        }
+        this.modifyFigureProperties();
     }
 }
 

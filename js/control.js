@@ -13,20 +13,20 @@ const functionsToBind = {
 
     keyUpClearScreen(e) {
         if (globalState.canChangeTool && globalState.canChangeColor) {
-            if (e.key.toLowerCase() === globalState.getConfig().keys.clearScreen && !metaKeysPress(e)) {
+            if (e.key.toLowerCase() === globalState.config.keys.clearScreen && !metaKeysPress(e)) {
                 pubsub.emit("board-clearCanvas1");
             }
         }
     },
 
     keyUpTool(e) {
-        const keys = globalState.getConfig().keys.tools.map(el => el.key);
+        const keys = globalState.config.keys.tools.map(el => el.key);
 
         if (globalState.canChangeTool) {
             if (keys.includes(e.key)) {
-                globalState.getConfig().keys.tools.forEach(el => {
+                globalState.config.keys.tools.forEach(el => {
                     if (e.key === el.key) {
-                        globalState.setTool(el.tool);
+                        globalState.tool = el.tool;
                     }
                 });
             }
@@ -34,12 +34,12 @@ const functionsToBind = {
     },
 
     keyUpColor(e) {
-        const keys = globalState.getConfig().keys.colors.map(el => el.key);
+        const keys = globalState.config.keys.colors.map(el => el.key);
         if (globalState.canChangeColor) {
             if (keys.includes(e.key)) {
-                globalState.getConfig().keys.colors.forEach(el => {
+                globalState.config.keys.colors.forEach(el => {
                     if (e.key === el.key && !metaKeysPress(e)) {
-                        globalState.setColor(el.color);
+                        globalState.color = el.color;
                     }
                 });
             }
@@ -48,12 +48,16 @@ const functionsToBind = {
 
     wheelSize(e) {
         if (globalState.canChangeSize) {
-            if (!["spot"].includes(globalState.getTool().name)) {
-                if (e.deltaY > 0) globalState.decreaseSize();
-                if (e.deltaY < 0) globalState.increaseSize();
+            //FIXME : tutaj trzeba inaczej rozegrać
+            //wynika to z faktu
+            //ze jak zaznaczymy za pomocą selection
+            //kilka kształtów to każdy z nich ma inny wymiar
+            //więc zwracanie tylko rozmiaru narzędzia to za malo
+            //bo musze wiedziec czy zwiekszam czy zmniejszam rozmiar narzedzi
+            if (globalState.tool.name !== "selection") {
+                if (e.deltaY > 0) globalState.decreaseSize(e);
+                if (e.deltaY < 0) globalState.increaseSize(e);
             } else {
-                //dla pubsub muszę nieco inaczej zwiekszac rozmiar
-                //i nie wplywac na rozmiar reszty narzedzi
                 pubsub.emit("tool-size", e);
             }
         }
@@ -61,7 +65,7 @@ const functionsToBind = {
 
     whiteBoard(e) {
         if (globalState.canChangeTool && globalState.canChangeColor) {
-            if (e.key === globalState.getConfig().keys.whiteBoard && !metaKeysPress(e)) {
+            if (e.key === globalState.config.keys.whiteBoard && !metaKeysPress(e)) {
                 document.body.classList.toggle("white-board-mode");
                 pubsub.emit("white-board", document.body.classList.contains("white-board-mode"))
             }

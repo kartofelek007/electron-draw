@@ -58,7 +58,7 @@ class Gui {
             "arrow": `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M13.025 1l-2.847 2.828 6.176 6.176h-16.354v3.992h16.354l-6.176 6.176 2.847 2.828 10.975-11z"/></svg>`
         };
 
-        for (const el of globalState.getConfig().keys.tools) {
+        for (const el of globalState.config.keys.tools) {
             const div = document.createElement("div");
             div.classList.add("gui-el")
             div.dataset.tool = el.tool;
@@ -71,12 +71,12 @@ class Gui {
                 <div class="gui-el__bg"></div>
             `
             div.addEventListener("click", e => {
-                if (globalState.getTool() !== null) {
+                if (globalState.tool !== null) {
                     pubsub.emit("board-clearCanvas2");
-                    globalState.getTool().destructor();
+                    globalState.tool.destructor();
                 }
 
-                globalState.setTool(div.dataset.tool);
+                globalState.tool = div.dataset.tool;
                 pubsub.emit("tool-type");
             });
 
@@ -87,7 +87,7 @@ class Gui {
     markCurrentTool() {
         const icons = this.elementTools.querySelectorAll(".gui-el");
         icons.forEach(el => {
-            if (el.dataset.tool === globalState.getTool().name) {
+            if (el.dataset.tool === globalState.tool.name) {
                 el.classList.add("active");
             } else {
                 el.classList.remove("active");
@@ -96,7 +96,7 @@ class Gui {
     }
 
     markCurrentColor() {
-        this.elementCurrentColor.style.backgroundColor = globalState.getColor();
+        this.elementCurrentColor.style.backgroundColor = globalState.color;
     }
 
     updateInfo() {

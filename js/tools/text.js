@@ -17,7 +17,7 @@ export class Text extends Tool {
 
     changeToolSize() {
         if (this._text !== null) {
-            this._text.set('fontSize', globalState.getTextSize() + 20);
+            this._text.set('fontSize', globalState.sizeText + 20);
             board.canvas.requestRenderAll();
         }
     }
@@ -40,7 +40,7 @@ export class Text extends Tool {
     }
 
     pressEscape(e) {
-        if (e.key.toLowerCase() === "escape" && globalState.getTool().name !== "selection") {
+        if (e.key.toLowerCase() === "escape" && globalState.tool.name !== "selection") {
             board.disableSelection();
 
             if (this._text) {
@@ -56,7 +56,6 @@ export class Text extends Tool {
                 globalState.canChangeTool = true;
 
                 this._text = null;
-
             }, 0);
         }
     }
@@ -68,9 +67,9 @@ export class Text extends Tool {
         board.clearCanvas2();
         board.ctx2.save();
         board.ctx2.beginPath();
-        board.ctx2.fillStyle = globalState.getColor();
+        board.ctx2.fillStyle = globalState.color;
         board.ctx2.globalAlpha = 1;
-        board.ctx2.rect(x, y - ((globalState.getTextSize() + 20) / 2), 5, globalState.getTextSize() + 20);
+        board.ctx2.rect(x, y - ((globalState.sizeText + 20) / 2), 5, globalState.sizeText + 20);
         board.ctx2.fill();
         board.ctx2.closePath();
         board.ctx2.restore();
@@ -82,10 +81,10 @@ export class Text extends Tool {
         this._text = new fabric.IText('text', {
             fontFamily: 'Open Sans, sans-serif',
             left: pointer.x,
-            top: pointer.y - ((globalState.getTextSize() + 20) / 2),
-            fontSize: globalState.getTextSize() + 20,
+            top: pointer.y - ((globalState.sizeText + 20) / 2),
+            fontSize: globalState.sizeText + 20,
             fontWeight: 600,
-            fill: globalState.getColor(),
+            fill: globalState.color,
             fontStyle: 'normal',
             cursorDuration: 500,
             cursorWidth: 5,
@@ -106,6 +105,7 @@ export class Text extends Tool {
         });
 
         this._text.on("editing:exited", o => {
+            this._text = null;
             if (globalState.toolName === "selection") {
                 globalState.canChangeSize = true;
                 globalState.canChangeColor = true;

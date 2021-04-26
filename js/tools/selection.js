@@ -17,23 +17,27 @@ export class Selection extends Tool {
         this.onKeyDown = this.onKeyDown.bind(this);
     }
 
-    changeToolSize() {
+    changeToolSize(e) {
         if (board.canvas.getActiveObject()) {
             board.canvas.getActiveObjects().forEach(el => {
                 const type = el.get("type");
                 if (type === "i-text") {
                     let size = el.get('fontSize');
-                    size += (e.deltaY > 0) ? -globalState.getConfig().size.step : globalState.getConfig().size.step;
-                    size = Math.min(size, globalState.getConfig().size.max + 10);
-                    size = Math.max(size, globalState.getConfig().size.min + 10);
+                    size += (e.deltaY > 0) ? -globalState.config.size.step : globalState.config.size.step;
+                    size = Math.min(size, globalState.config.size.max + 10);
+                    size = Math.max(size, globalState.config.size.min + 10);
                     el.set('fontSize', size);
                 } else if (type === "group") {
                 } else {
                     let size = el.get('strokeWidth');
-                    size += (e.deltaY > 0) ? -globalState.getConfig().size.step : globalState.getConfig().size.step;
-                    size = Math.min(size, globalState.getConfig().size.max);
-                    size = Math.max(size, globalState.getConfig().size.min);
+                    size += (e.deltaY > 0) ? -globalState.config.size.step : globalState.config.size.step;
+                    size = Math.min(size, globalState.config.size.max);
+                    size = Math.max(size, globalState.config.size.min);
                     el.set("strokeWidth", size);
+                    console.log(type);
+                    if (type === "line" && el.get('strokeDashArray') !== false) {
+                        el.set('strokeDashArray', [size, size]);
+                    }
                 }
             });
 
@@ -66,18 +70,18 @@ export class Selection extends Tool {
         if (board.canvas.getActiveObject()) {
             loopThroughElements(board.canvas.getActiveObjects(), {
                 "i-text": function(el) {
-                    el.set("fill", globalState.getColor());
+                    el.set("fill", globalState.color);
                 },
                 "rect": function(el) {
                     if (el.fill !== "transparent") {
-                        if (hexToRGBA(globalState.getColor(), 0.7)) {
-                            el.set("fill", hexToRGBA(globalState.getColor(), 0.7));
+                        if (hexToRGBA(globalState.color, 0.7)) {
+                            el.set("fill", hexToRGBA(globalState.color, 0.7));
                         }
                     }
-                    el.set("stroke", globalState.getColor());
+                    el.set("stroke", globalState.color);
                 },
                 [otherTypeKey]: function(el) {
-                    el.set("stroke", globalState.getColor());
+                    el.set("stroke", globalState.color);
                 }
             });
             board.canvas.renderAll();

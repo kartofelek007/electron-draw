@@ -11,16 +11,16 @@ export class Brush extends Tool {
         board.disableSelection();
         board.canvas.isDrawingMode = true;
 
-        board.canvas.freeDrawingBrush.color = globalState.getColor();
-        board.canvas.freeDrawingBrush.width = globalState.getSize();
+        board.canvas.freeDrawingBrush.color = globalState.color;
+        board.canvas.freeDrawingBrush.width = globalState.size;
     }
 
     changeToolSize() {
-        board.canvas.freeDrawingBrush.width = globalState.getSize();
+        board.canvas.freeDrawingBrush.width = globalState.size;
     }
 
     changeToolColor() {
-        board.canvas.freeDrawingBrush.color = globalState.getColor();
+        board.canvas.freeDrawingBrush.color = globalState.color;
     }
 
     destructor() {
@@ -43,10 +43,10 @@ export class Brush extends Tool {
         board.clearCanvas2();
         board.ctx2.save();
         board.ctx2.lineCap = 'round';
-        board.ctx2.fillStyle = globalState.getColor();
+        board.ctx2.fillStyle = globalState.color;
         board.ctx2.globalAlpha = 1;
         board.ctx2.beginPath();
-        board.ctx2.arc(x, y, globalState.getSize() / 2, 0, 2 * Math.PI);
+        board.ctx2.arc(x, y, globalState.size / 2, 0, 2 * Math.PI);
         board.ctx2.fill();
         board.ctx2.closePath();
         board.ctx2.restore();

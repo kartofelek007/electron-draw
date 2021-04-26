@@ -23,62 +23,56 @@ const state = {
 };
 
 export default {
+    //dla tekstu trzymam rozmiar w osobnej zmiennej
+    //dzieki temu poprawia sie uzytecznosc tego narzedzia
     decreaseSize() {
-        if (this.getTool().name === "text") {
-            this.setTextSize(this.getTextSize() - this.getConfig().size.step);
-            if (this.getTextSize() < this.getConfig().size.min) {
-                this.setTextSize(this.getConfig().size.min);
-            }
+        if (this.tool.name === "text") {
+            this.sizeText = this.sizeText - this.config.size.step;
+            this.sizeText = Math.max(this.sizeText, this.config.size.min);
         } else {
-            this.setSize(this.getSize() - this.getConfig().size.step);
-            if (this.getSize() < this.getConfig().size.min) {
-                this.setSize(this.getConfig().size.min);
-            }
+            this.size = this.size - this.config.size.step;
+            this.size = Math.max(this.size, this.config.size.min);
         }
-        pubsub.emit("tool-size", this.getSize())
     },
 
     increaseSize() {
-        if (this.getTool().name === "text") {
-            this.setTextSize(this.getTextSize() + this.getConfig().size.step);
-            if (this.getTextSize() > this.getConfig().size.max) {
-                this.setTextSize(this.getConfig().size.max);
-            }
+        if (this.tool.name === "text") {
+            this.sizeText = this.sizeText + this.config.size.step;
+            this.sizeText = Math.min(this.sizeText, this.config.size.max);
         } else {
-            this.setSize(this.getSize() + this.getConfig().size.step);
-            if (this.getSize() > this.getConfig().size.max) {
-                this.setSize(this.getConfig().size.max);
-            }
+            this.size = this.size + this.config.size.step;
+            this.size = Math.min(this.size, this.config.size.max);
         }
-        pubsub.emit("tool-size", this.getSize())
+
     },
 
-    getSize() {
+    get size() {
         return state.size;
     },
 
-    setSize(newSize) {
+    set size(newSize) {
         state.size = newSize;
-        pubsub.emit("tool-size", this.getSize())
+        pubsub.emit("tool-size", this.size)
     },
 
-    getTextSize() {
+    get sizeText() {
         return state.sizeText;
     },
 
-    setTextSize(newSize) {
+    set sizeText(newSize) {
         state.sizeText = newSize;
+        pubsub.emit("tool-size", this.size)
     },
 
-    setConfig(newConfig) {
+    set config(newConfig) {
         state.config = newConfig;
     },
 
-    getConfig() {
+    get config() {
         return state.config;
     },
 
-    setColor(newColor) {
+    set color(newColor) {
         if (state.config.keys.colors.find(el => el.color === newColor)) {
             state.color = newColor;
             board.updateCanvas2();
@@ -86,11 +80,11 @@ export default {
         }
     },
 
-    getColor() {
+    get color() {
         return state.color;
     },
 
-    setTool(name) {
+    set tool(name) {
         if (state.toolName !== name) {
             if (state.tool !== null) {
                 pubsub.emit("board-clearCanvas2");
@@ -102,7 +96,7 @@ export default {
         }
     },
 
-    getTool() {
+    get tool() {
         return state.tool;
     },
 
