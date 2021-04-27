@@ -160,18 +160,4 @@ export class Rectangle extends Tool {
         }
         this._rect = null;
     }
-
-    onKeyUp(e) {
-        if (!e.ctrlKey) {
-            this._modifier = false;
-        }
-        this.modifyFigureProperties();
-    }
-
-    onKeyDown(e) {
-        if (e.ctrlKey) {
-            this._modifier = true;
-        }
-        this.modifyFigureProperties();
-    }
 }

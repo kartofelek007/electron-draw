@@ -7,6 +7,8 @@ export default class Tool {
         }
 
         this.name = "";
+        this._modifier = false;
+
         this.destructor = this.destructor.bind(this);
         this.onMouseDown = this.onMouseDown.bind(this);
         this.onMouseMove = this.onMouseMove.bind(this);
@@ -30,6 +32,8 @@ export default class Tool {
         pubsub.off("tool-color", this.changeToolColor);
     }
 
+    modifyFigureProperties() {}
+
     onMouseMove() {}
 
     onMouseDown() {}
@@ -46,7 +50,17 @@ export default class Tool {
 
     changeToolSize() {}
 
-    onKeyDown() {}
+    onKeyUp(e) {
+        if (!e.ctrlKey) {
+            this._modifier = false;
+        }
+        this.modifyFigureProperties();
+    }
 
-    onKeyUp() {}
+    onKeyDown(e) {
+        if (e.ctrlKey) {
+            this._modifier = true;
+        }
+        this.modifyFigureProperties();
+    }
 }

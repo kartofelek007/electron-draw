@@ -56,11 +56,12 @@ export class Line extends Tool {
     }
 
     drawHelper(e) {
-        if (this._draw) return;
         const x = e.pageX;
         const y = e.pageY;
 
         board.clearCanvas2();
+
+        if (this._draw) return;
         board.ctx2.save();
         board.ctx2.lineCap = 'round';
         board.ctx2.fillStyle = globalState.color;
@@ -122,19 +123,5 @@ export class Line extends Tool {
 
         this._draw = false;
         this._line = null;
-    }
-
-    onKeyUp(e) {
-        if (!e.ctrlKey) {
-            this._modifier = false;
-        }
-        this.modifyFigureProperties();
-    }
-
-    onKeyDown(e) {
-        if (e.ctrlKey) {
-            this._modifier = true;
-        }
-        this.modifyFigureProperties();
     }
 }
