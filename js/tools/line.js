@@ -37,9 +37,13 @@ export class Line extends Tool {
 
     bindEvents() {
         document.addEventListener("mousemove", this.drawHelper);
+
         board.canvas.on("mouse:down", this.onMouseDown);
         board.canvas.on("mouse:move", this.onMouseMove);
         board.canvas.on("mouse:up", this.onMouseUp);
+
+        this.onKeyUp = this.onKeyUp.bind(this);
+        this.onKeyDown = this.onKeyDown.bind(this);
 
         document.addEventListener("keyup", this.onKeyUp);
         document.addEventListener("keydown", this.onKeyDown);
@@ -123,5 +127,13 @@ export class Line extends Tool {
 
         this._draw = false;
         this._line = null;
+    }
+
+    onKeyUp(e) {
+        super._onKeyUp(e);
+    }
+
+    onKeyDown(e) {
+        super._onKeyDown(e);
     }
 }

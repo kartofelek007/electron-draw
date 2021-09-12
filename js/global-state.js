@@ -85,15 +85,13 @@ export default {
     },
 
     set tool(name) {
-        if (state.toolName !== name) {
-            if (state.tool !== null) {
-                pubsub.emit("board-clearCanvas2");
-                state.tool.destructor();
-            }
-
-            state.tool = factoryTool.generateTool(name);
-            pubsub.emit("tool-type");
+        if (state.tool !== null && state.tool.name !== name) {
+            pubsub.emit("board-clearCanvas2");
+            state.tool.destructor();
         }
+
+        state.tool = factoryTool.generateTool(name);
+        pubsub.emit("tool-type");
     },
 
     get tool() {

@@ -107,7 +107,6 @@ class Control {
         document.addEventListener("keyup", functionsToBind.whiteBoard);
         document.addEventListener("wheel", functionsToBind.wheelSize);
         document.addEventListener("keyup", functionsToBind.showHideGui);
-        document.addEventListener("keyup", functionsToBind.saveScreenShoot);
     }
 
     unbindAllEvents() {
@@ -117,7 +116,6 @@ class Control {
         document.removeEventListener("keyup", functionsToBind.whiteBoard);
         document.removeEventListener("wheel", functionsToBind.wheelSize);
         document.removeEventListener("keyup", functionsToBind.showHideGui);
-        document.removeEventListener("keyup", functionsToBind.saveScreenShoot);
     }
 }
 

@@ -10,14 +10,11 @@ export default class Tool {
         this._modifier = false;
 
         this.destructor = this.destructor.bind(this);
-        this.onMouseDown = this.onMouseDown.bind(this);
-        this.onMouseMove = this.onMouseMove.bind(this);
-        this.onMouseUp = this.onMouseUp.bind(this);
         this.drawHelper = this.drawHelper.bind(this);
         this.changeToolSize = this.changeToolSize.bind(this);
         this.changeToolColor = this.changeToolColor.bind(this);
-        this.onKeyDown = this.onKeyDown.bind(this);
-        this.onKeyUp = this.onKeyUp.bind(this);
+        this._onKeyDown = this._onKeyDown.bind(this);
+        this._onKeyUp = this._onKeyUp.bind(this);
 
         pubsub.on("tool-size", this.changeToolSize);
         pubsub.on("tool-color", this.changeToolColor);
@@ -27,18 +24,12 @@ export default class Tool {
 
     destructor() {
         this.unbindEvents();
-
+        
         pubsub.off("tool-size", this.changeToolSize);
         pubsub.off("tool-color", this.changeToolColor);
     }
 
     modifyFigureProperties() {}
-
-    onMouseMove() {}
-
-    onMouseDown() {}
-
-    onMouseUp() {}
 
     drawHelper() {}
 
@@ -50,14 +41,14 @@ export default class Tool {
 
     changeToolSize() {}
 
-    onKeyUp(e) {
+    _onKeyUp(e) {
         if (!e.ctrlKey) {
             this._modifier = false;
         }
         this.modifyFigureProperties();
     }
 
-    onKeyDown(e) {
+    _onKeyDown(e) {
         if (e.ctrlKey) {
             this._modifier = true;
         }

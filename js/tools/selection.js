@@ -34,7 +34,7 @@ export class Selection extends Tool {
                     size = Math.min(size, globalState.config.size.max);
                     size = Math.max(size, globalState.config.size.min);
                     el.set("strokeWidth", size);
-                    console.log(type);
+
                     if (type === "line" && el.get('strokeDashArray') !== false) {
                         el.set('strokeDashArray', [size, size]);
                     }
@@ -126,7 +126,6 @@ export class Selection extends Tool {
         }
 
         if (e.key.toLowerCase() === "escape") {
-            console.log('escape');
             board.canvas.discardActiveObject();
             board.canvas.requestRenderAll();
         }
@@ -142,7 +141,6 @@ export class Selection extends Tool {
         }
 
         if (e.key.toLowerCase() === "c" && e.ctrlKey) {
-            console.log('test');
             if (board.canvas.getActiveObject()) {
                 board.canvas.getActiveObject().clone(cloned => {
                     this._clipboard = cloned;
@@ -152,7 +150,6 @@ export class Selection extends Tool {
 
         if (e.key.toLowerCase() === "v" && e.ctrlKey) {
             if (this._clipboard) {
-                console.log('test2');
                 this._clipboard.clone(clonedObj => {
                     board.canvas.discardActiveObject();
                     clonedObj.set({

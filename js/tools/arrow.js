@@ -37,9 +37,9 @@ export class Arrow extends Tool {
 
     bindEvents() {
         document.addEventListener("mousemove", this.drawHelper);
-        board.canvas.on("mouse:down", this.onMouseDown);
-        board.canvas.on("mouse:move", this.onMouseMove);
-        board.canvas.on("mouse:up", this.onMouseUp);
+        board.canvas.on("mouse:down", this._onMouseDown);
+        board.canvas.on("mouse:move", this._onMouseMove);
+        board.canvas.on("mouse:up", this._onMouseUp);
 
         document.addEventListener("keyup", this.onKeyUp);
         document.addEventListener("keydown", this.onKeyDown);
@@ -83,7 +83,7 @@ export class Arrow extends Tool {
         }
     }
 
-    onMouseDown(o) {
+    _onMouseDown(o) {
         this._draw = true;
 
         const pointer = board.canvas.getPointer(o.e);
@@ -107,12 +107,10 @@ export class Arrow extends Tool {
 
         this.modifyFigureProperties();
 
-        console.log(this._modifier);
-
         board.canvas.add(this._line);
     }
 
-    onMouseMove(o) {
+    _onMouseMove(o) {
         if (this._draw) {
             const pointer = board.canvas.getPointer(o.e);
             this._line.set({x2: pointer.x, y2: pointer.y});
@@ -121,7 +119,7 @@ export class Arrow extends Tool {
         }
     }
 
-    onMouseUp(o) {
+    _onMouseUp(o) {
         const pointer = board.canvas.getPointer(o.e);
         let x = pointer.x;
         let y = pointer.y;
@@ -140,17 +138,11 @@ export class Arrow extends Tool {
     }
 
     onKeyUp(e) {
-        if (!e.ctrlKey) {
-            this._modifier = false;
-        }
-        this.modifyFigureProperties();
+        super._onKeyUp(e);
     }
 
     onKeyDown(e) {
-        if (e.ctrlKey) {
-            this._modifier = true;
-        }
-        this.modifyFigureProperties();
+        super._onKeyDown(e);
     }
 }
 

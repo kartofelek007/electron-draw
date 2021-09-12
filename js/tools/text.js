@@ -116,6 +116,4 @@ export class Text extends Tool {
         this._text.enterEditing();
         this._text.selectAll();
     }
-
-
 }
