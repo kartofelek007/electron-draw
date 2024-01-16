@@ -3,7 +3,7 @@ export default {
         "min": 4,
         "max": 30,
         "step": 2,
-        "default": 8
+        "default": 4
     },
 
     "askToSaveScreenShoot" : true,
@@ -11,8 +11,6 @@ export default {
     "keys" : {
         "hideGui" : "`",
         "clearScreen": "c",
-        "whiteBoard": "/",
-        "saveKey" : ".",
 
         "colors": [
             {"key" : "r", "name": "red", "color" : "#FA122E"},
@@ -21,7 +19,7 @@ export default {
             {"key" : "o", "name": "orange", "color" : "#FF9B00"},
             {"key" : "y", "name": "yellow", "color" : "#E3E36A"},
             {"key" : "v", "name": "violet", "color" : "#7200DA"},
-            {"key" : "d", "name": "dark", "color" : "#311e3e"},
+            {"key" : "d", "name": "dark", "color" : "#222"},
             {"key" : "w", "name": "white", "color" : "#fffcf0"},
         ],
 
@@ -30,8 +28,7 @@ export default {
             {"key": "2", "name": "brush", "tool": "brush"},
             {"key": "3", "name": "rectangle", "tool": "rectangle"},
             {"key": "4", "name": "line", "tool": "line"},
-            {"key": "5", "name": "arrow", "tool": "arrow"},
-            {"key": "6", "name": "text", "tool": "text"}
+            {"key": "5", "name": "text", "tool": "text"}
         ]
     }
 };

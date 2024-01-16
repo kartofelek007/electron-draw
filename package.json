@@ -19,8 +19,8 @@
     "author": "Marcin Domański",
     "license": "CC0-1.0",
     "devDependencies": {
-        "electron": "^13.2.3",
-        "electron-builder": "^22.11.7"
+        "electron": "^21.3.0",
+        "electron-builder": "^23.6.0"
     },
     "build": {
         "appId": "PresentationDrawer",
@@ -46,7 +46,7 @@
         }
     },
     "dependencies": {
-        "jsdom": "^17.0.0",
-        "jsonschema": "^1.4.0"
+        "jsdom": "^20.0.2",
+        "jsonschema": "^1.4.1"
     }
 }

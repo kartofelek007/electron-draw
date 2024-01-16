@@ -1,17 +1,19 @@
 import globalState from "./global-state.js";
 import storage from "./utils/localStorage.js";
 import pubsub from "./pubsub.js";
+import config from "../config.js";
 
 class Gui {
     constructor() {
         this.elementGui = document.querySelector("#gui");
+
         this.generateHTML();
         this.elementTools = document.querySelector("#guiToolsPlace");
-        this.elementCurrentColor = document.querySelector("#guiCurrentColor");
+        this.colorHelpIcons = document.querySelector("#helpColorIcons");
 
         this.updateInfo = this.updateInfo.bind(this);
         this.toggleGui = this.toggleGui.bind(this);
-        this.updateGuiTheme = this.updateGuiTheme.bind(this);
+        this.generateColorHelpIcons();
     }
 
     init() {
@@ -19,7 +21,6 @@ class Gui {
         pubsub.on("tool-color", this.updateInfo);
         pubsub.on("tool-size", this.updateInfo);
         pubsub.on("gui-hide", this.toggleGui)
-        pubsub.on("white-board", this.updateGuiTheme)
 
         if (storage.get("guiHidden")) {
             this.elementGui.classList.add("gui-hidden");
@@ -29,21 +30,9 @@ class Gui {
         this.elementGui.classList.add("gui-ready")
     }
 
-    updateGuiTheme(whiteBoardShow) {
-        if (whiteBoardShow) {
-            this.elementGui.classList.add("dark");
-        } else {
-            this.elementGui.classList.remove("dark");
-        }
-    }
-
     generateHTML() {
         this.elementGui.innerHTML = `            
-            <div class="gui-el gui-el-with-color">
-                <div class="gui-el__color" id="guiCurrentColor"></div>
-                <div class="gui-el__bg"></div>
-            </div>          
-            <div class="gui-tools" id="guiToolsPlace"></div>  
+            <div class="gui-tools" id="guiToolsPlace"></div>
         `;
     }
 
@@ -95,13 +84,9 @@ class Gui {
         })
     }
 
-    markCurrentColor() {
-        this.elementCurrentColor.style.backgroundColor = globalState.color;
-    }
-
     updateInfo() {
         this.markCurrentTool();
-        this.markCurrentColor();
+        this.generateColorHelpIcons();
     }
 
     toggleGui() {
@@ -113,6 +98,23 @@ class Gui {
         } else {
             storage.remove(keyInStorage);
         }
+    }
+
+    generateColorHelpIcons() {
+        this.colorHelpIcons.innerHTML = "";
+        config.keys.colors.forEach(el => {
+            const div = document.createElement("div");
+            div.classList.add("color-help-icons-el");
+            div.style.setProperty("--color", el.color);
+            div.innerHTML = `
+                <span class="color-help-icons-el__key">${el.key}</span>
+                <span class="color-help-icons-el__color"></span>
+            `;
+            if (el.color === globalState.color) {
+                div.classList.add("active");
+            }
+            this.colorHelpIcons.append(div)
+        })
     }
 }
 

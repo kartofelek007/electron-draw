@@ -60,6 +60,10 @@ export class Rectangle extends Tool {
         board.canvas.off("mouse:move", this.onMouseMove);
         board.canvas.off("mouse:up", this.onMouseUp);
 
+        document.removeEventListener("onMouseDown", this.onMouseDown);
+        document.removeEventListener("onMouseMove", this.onMouseMove);
+        document.removeEventListener("onMouseUp", this.onMouseUp);
+
         document.removeEventListener("keyup", this.onKeyUp);
         document.removeEventListener("keydown", this.onKeyDown);
     }

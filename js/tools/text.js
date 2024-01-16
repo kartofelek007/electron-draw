@@ -69,7 +69,7 @@ export class Text extends Tool {
         board.ctx2.beginPath();
         board.ctx2.fillStyle = globalState.color;
         board.ctx2.globalAlpha = 1;
-        board.ctx2.rect(x, y - ((globalState.sizeText + 20) / 2), 5, globalState.sizeText + 20);
+        board.ctx2.rect(x, y - ((globalState.sizeText + 20) / 2), 3, globalState.sizeText + 20);
         board.ctx2.fill();
         board.ctx2.closePath();
         board.ctx2.restore();

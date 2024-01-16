@@ -24,7 +24,7 @@ export default class Tool {
 
     destructor() {
         this.unbindEvents();
-        
+
         pubsub.off("tool-size", this.changeToolSize);
         pubsub.off("tool-color", this.changeToolColor);
     }

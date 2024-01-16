@@ -1,44 +1,42 @@
 .gui {
-    --color: #FFF;
-    --border-width: 3px;
-    --gap: 30px;
+    --color: #222;
+    --border-width: 1px;
+    --gap: 25px;
 
     position: absolute;
-    left: 50%;
-    top: 40px;
-    transform: translate(-50%);
+    left: 30px;
+    transform: translate(0, -50%);
+    top: 50%;
     display: flex;
+    flex-direction: column;
     gap: var(--gap);
     justify-content: center;
     z-index: 3;
 }
 
-.gui.dark {
-    --color: #555;
+.gui * {
+    pointer-events: all;
 }
 
-.gui.dark .gui-el.active {
-    --color: #444;
+.gui .gui-el.active {
+    --color: #000;
 }
 
 .gui-tools {
     display: flex;
+    flex-direction: column;
     gap: var(--gap);
 }
 
 .gui-el {
-    width: 70px;
-    height: 70px;
+    width: 55px;
+    height: 55px;
     display: inline-flex;
     justify-content: center;
     align-items: center;
     position: relative;
     opacity: 0.3;
     cursor: pointer;
-}
-
-.gui-el.active {
-    opacity: 1;
 }
 
 .gui-el-with-color {
@@ -51,18 +49,20 @@
 }
 
 .gui-el__color {
-    width: calc(100% - 2 * var(--border-width) - 4px);
-    height: calc(100% - 2 * var(--border-width) - 4px);
+    width: calc(100% - 2 * var(--border-width));
+    height: calc(100% - 2 * var(--border-width));
     border-radius: 50%;
 }
 
 .gui-el__icon {
     pointer-events: none;
+    display: flex;
+    align-items: center;
 }
 
 .gui-el__icon svg {
-    width: 24px;
-    height: 24px;
+    width: 20px;
+    height: 20px;
     fill: var(--color);
 }
 
@@ -75,9 +75,10 @@
     transform: translate(-50%, -50%);
     border: var(--border-width) solid var(--color);
     border-radius: 50%;
-    --x: 26px;
-    --y: 25px;
-    clip-path: polygon(var(--x) 0, 100% 0, 100% 100%, 0 100%, 0 var(--y), var(--x) var(--y));
+    --x: 22px;
+    --y: 22px;
+    mask-image: radial-gradient(circle at 0 0, transparent 20px, white 20px);
+    -webkit-mask-image: radial-gradient(circle at 0 0, transparent 20px, white 20px);
 }
 
 .gui-el-with-color .gui-el__bg {
@@ -90,14 +91,80 @@
     top: -8px;
     border-radius: 50%;
     z-index: 2;
-    width: 30px;
-    height: 30px;
+    width: 25px;
+    height: 25px;
     box-shadow: inset 0 0 0 var(--border-width) var(--color);
     display: flex;
     justify-content: center;
     align-items: center;
     color: var(--color);
     font-family: sans-serif;
-    font-size: 14px;
+    font-size: 12px;
     font-weight: bold;
+}
+
+.gui-el.active {
+    opacity: 1;
+    --border-width: 2px;
+}
+
+.gui-el.active .gui-el__bg {
+}
+
+.gui-el.active .gui-el__key {
+}
+
+.gui-el.active .gui-el__icon {
+}
+
+.gui-el.active .gui-el__icon svg {
+}
+
+
+.color-help-icons {
+    position: fixed;
+    bottom: 30px;
+    left: 30px;
+    pointer-events: none;
+    display: flex;
+    gap: 10px;
+}
+
+.color-help-icons-el {
+    position: relative;
+    width: 26px;
+    height: 26px;
+}
+.color-help-icons-el__key {
+    position: absolute;
+    text-transform: uppercase;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    font-weight: bold;
+    justify-content: center;
+    align-items: center;
+    font-family: sans-serif;
+    font-size: 12px;
+    line-height: 1;
+    color: var(--color);
+}
+.color-help-icons-el__color {
+    width: 100%;
+    height: 100%;
+    display: inline-block;
+    border: 1px solid var(--color);
+    border-radius: 3px;
+}
+
+.color-help-icons-el.active {
+}
+
+.color-help-icons-el.active .color-help-icons-el__key {
+    color: #000;
+}
+.color-help-icons-el.active .color-help-icons-el__color {
+    background: var(--color);
 }
