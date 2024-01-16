@@ -17,10 +17,9 @@ export default {
             {"key" : "g", "name": "green", "color" : "#2CD864"},
             {"key" : "b", "name": "blue", "color" : "#0080FF"},
             {"key" : "o", "name": "orange", "color" : "#FF9B00"},
-            {"key" : "y", "name": "yellow", "color" : "#E3E36A"},
-            {"key" : "v", "name": "violet", "color" : "#7200DA"},
-            {"key" : "d", "name": "dark", "color" : "#222"},
-            {"key" : "w", "name": "white", "color" : "#fffcf0"},
+            {"key" : "y", "name": "yellow", "color" : "#eec51f"},
+            {"key" : "v", "name": "violet", "color" : "#8d25ec"},
+            {"key" : "p", "name": "violet", "color" : "#ff00f3"},
         ],
 
         "tools" : [
