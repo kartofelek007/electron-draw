@@ -6,7 +6,7 @@ body {
     margin: 0;
     height: 100vh;
     overflow: hidden;
-    background: #F0F2F5;
+    background: #f4f6f8;
 }
 
 body.white-board-mode {
